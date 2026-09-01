@@ -49,6 +49,32 @@ function kad(icon, title, desc){
   return `<div class="kad-card"><span class="k-icon">${icon}</span><b>${title}</b><span>${desc}</span></div>`;
 }
 
+function quizSummaryTile(){
+  const total = QUIZ_BANK.length;
+  const attempted = QUIZ_BANK.filter(q => quizAnswers[q.id] !== undefined).length;
+  const correct = QUIZ_BANK.filter(q => quizAnswers[q.id] === q.correct).length;
+  const pct = total ? Math.round((correct / total) * 100) : 0;
+  const circumference = 138.2;
+  const offset = circumference - (pct / 100) * circumference;
+  const subtext = attempted
+    ? `${correct} / ${attempted} attempted correct &middot; ${total - attempted} left to try`
+    : `${total} questions, not started yet`;
+  return `<div class="progress-summary quiz-summary-tile">
+    <svg class="progress-ring" viewBox="0 0 56 56">
+      <circle cx="28" cy="28" r="22" fill="none" stroke="#E2E6EF" stroke-width="5"></circle>
+      <circle cx="28" cy="28" r="22" fill="none" stroke="#0176D3" stroke-width="5"
+        stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
+        transform="rotate(-90 28 28)"></circle>
+    </svg>
+    <div>
+      <p class="p-label">Quiz score</p>
+      <p class="p-count">${correct} / ${total} correct &middot; ${pct}%</p>
+      <p class="quiz-summary-sub">${subtext}</p>
+    </div>
+    <a href="#quiz" class="quiz-summary-link">Open Quiz Bank &#8594;</a>
+  </div>`;
+}
+
 function quizQuestionHtml(q, num){
   const answered = quizAnswers[q.id];
   const isAnswered = answered !== undefined;
@@ -191,6 +217,7 @@ const SHEETS = [
           ${kad('🔧', 'Practice', 'Connected Case scenarios and an Artefact Studio — decide first, then check your reasoning against a model answer and rubric.')}
           ${kad('🏅', 'Certify', 'Layer credentials — Administrator through Certified Technical Architect — as each domain solidifies.')}
         </div>
+        ${quizSummaryTile()}
         <h2 class="section-h">How to use this workspace</h2>
         <ol class="step-list">
           <li>Work the left-hand map top to bottom — each sheet builds on the last.</li>
