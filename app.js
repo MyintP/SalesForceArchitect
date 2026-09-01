@@ -123,7 +123,12 @@ const SHEETS = [
       {id:'r4', title:'Read "Think Like an Architect"', note:'Expert analysis of real-world design scenarios — the closest thing to a worked example.'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~20 min · +100 pts')}${itemList(this)}
+      return `${sheetHeader(this)}${sheetMeta('~20 min · +100 pts')}
+        <h2 class="section-h">What the role actually does</h2>
+        <p class="body-text">A Salesforce Architect is not "the best admin" or "the senior developer." The job is deciding <i>how</i> a business requirement should be built on the platform — declarative or programmatic, one org or several, real-time integration or batch — and then defending that decision to stakeholders who each have a narrower, conflicting view of what's right. Three architect tiers exist in practice: <b>Application Architect</b> (data model, sharing, UI, and process inside one org), <b>System Architect</b> (integration, identity, and multi-system topology), and <b>Enterprise/Technical Architect</b> (cross-org, cross-cloud, cross-platform strategy — where CTA sits).</p>
+        <p class="body-text">Day to day, that means: reviewing a proposed data model before anyone builds it; saying no to a well-intentioned but unbulkified trigger; drawing the line between "configure this" and "write code for this"; and writing the one-page document that a build team can execute against without asking you ten follow-up questions. The skill being tested is judgment under ambiguity, not platform trivia.</p>
+        <h2 class="section-h">Suggested reading</h2>
+        ${itemList(this)}
         <div class="callout">
           <b>Why this order —</b> everything downstream assumes you already know what the job is judging you on: trade-off reasoning under real constraints, not tool trivia.
         </div>`;
@@ -140,7 +145,12 @@ const SHEETS = [
       {id:'f3', title:'Security & sharing model — the basics', note:'Profiles, permission sets, org-wide defaults, sharing rules. Deepens later in Sharing & Visibility Design.', tag:'~2h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~5.5 h')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~5.5 h')}
+        <h2 class="section-h">The org, in one paragraph</h2>
+        <p class="body-text">An <b>org</b> is one isolated tenant of the platform — its own data, metadata, and configuration. Everything you build lives as <b>objects</b> (tables), which have <b>fields</b> (columns) and hold <b>records</b> (rows). Standard objects (Account, Contact, Opportunity, Case) ship with the platform; <b>custom objects</b> (suffixed <code>__c</code>) are ones you define. Relationships between objects come in two flavours: <b>lookup</b> (loose — child can exist without a parent, no cascade delete by default) and <b>master-detail</b> (tight — child inherits the parent's security and is deleted with it; also the mechanism behind roll-up summary fields). A <b>junction object</b> — two master-detail relationships on one object — is how you model many-to-many.</p>
+        <h2 class="section-h">The security model, in one paragraph</h2>
+        <p class="body-text"><b>Object-level security</b> (can this user see the object at all) is set by <b>profiles</b> and <b>permission sets</b> — profile is the one mandatory baseline per user, permission sets are the stackable additions on top. <b>Record-level security</b> starts with <b>Organization-Wide Defaults (OWD)</b> — the maximum-restrictive baseline per object (Private, Public Read Only, Public Read/Write, or Controlled by Parent) — and is then <i>opened up</i> by role hierarchy, sharing rules, or manual sharing. <b>Field-level security</b> (can this user see this specific field) is layered independently on top of both. The exam-and-review-board habit to build now: state OWD first, every time, before naming any mechanism that widens access.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -153,7 +163,12 @@ const SHEETS = [
       {id:'a2', title:'When to use Flow vs Apex', note:'A framing you can argue confidently without being a developer.', tag:'~30m'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~2.5 h')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~2.5 h')}
+        <h2 class="section-h">Flow, in one paragraph</h2>
+        <p class="body-text">Flow is the platform's declarative process engine. <b>Screen Flows</b> collect input across guided steps (a wizard). <b>Record-Triggered Flows</b> fire on create/update/delete of a record, before-save (fast, same-transaction field updates, no DML needed) or after-save (can create related records, send emails, call sub-flows). <b>Scheduled</b> and <b>Autolaunched</b> flows run on a timer or are invoked from elsewhere (Apex, another flow, a Platform Event). Order of execution matters: before-save flows run alongside before-triggers; after-save flows and after-triggers run afterward — mixing declarative and programmatic automation on the same object without knowing this ordering is a common source of "why did this run twice" bugs.</p>
+        <h2 class="section-h">Flow vs Apex — the actual decision rule</h2>
+        <p class="body-text">Default to Flow. Reach for Apex only when the requirement needs something Flow genuinely can't do cleanly: complex recursive logic, calling an external API synchronously within a transaction, bulk processing beyond what Flow's loop elements handle efficiently, or logic so branching that a flow diagram becomes unreadable and unmaintainable. The architect's job is naming <i>which</i> of those triggers applies — "it's complicated" is not a justification a reviewer accepts.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -170,7 +185,19 @@ const SHEETS = [
       {id:'ax6', title:'Testing discipline', note:'Test classes, meaningful assertions vs coverage theatre, mocking with Test.isRunningTest().', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~7 h')}${itemList(this)}
+      return `${sheetHeader(this)}${sheetMeta('~7 h')}
+        <h2 class="section-h">Governor limits that actually matter</h2>
+        <p class="body-text">Every Apex transaction runs inside a sandbox of hard limits, reset per transaction. The ones that shape design decisions: <b>100 SOQL queries</b> per synchronous transaction (200 async), <b>150 DML statements</b>, <b>50,000 records</b> retrieved by SOQL in one transaction, <b>10 seconds</b> of CPU time synchronous (60 seconds async), and <b>6MB heap</b> synchronous (12MB async). None of these are "raise a ticket" limits — they're per-transaction and non-negotiable. Every one of them is hit by the same root cause: a SOQL query or DML statement sitting inside a loop.</p>
+        <h2 class="section-h">Bulkification, concretely</h2>
+        <p class="body-text">Salesforce can invoke a trigger with up to 200 records in one context (a bulk data load, an API batch update). Code that queries or writes once per record — <code>for(Account a : accs){ update a; }</code> — burns through the DML limit at 150 records and fails outright, even though it "worked" in every manual test with one record. The fix is always the same shape: collect into a list, then one <code>update accountList;</code> after the loop. This single pattern is the most common review-board and code-review failure, and the fastest credibility signal an architect can give by catching it in someone else's pull request.</p>
+        <h2 class="section-h">Async Apex — which tool, when</h2>
+        <ul class="plain-list">
+          <li><b>@future</b> — fire-and-forget, no chaining, no job monitoring. Legacy; Queueable has mostly replaced it.</li>
+          <li><b>Queueable</b> — chainable (one job can enqueue the next), takes typed parameters, trackable via Id. Default choice for "do this async."</li>
+          <li><b>Batch Apex</b> — processes millions of records in scoped chunks (start/execute/finish); the tool for large-volume data jobs.</li>
+          <li><b>Scheduled Apex</b> — cron-based, typically kicks off a Batch job on a timer.</li>
+        </ul>
+        ${itemList(this)}
         <div class="callout">
           <b>The architect's job here isn't to write it —</b> it's to know when Apex is the right call over Flow, and to review someone else's Apex for the limits and bulkification mistakes that don't show up until production load.
         </div>`;
@@ -189,7 +216,17 @@ const SHEETS = [
       {id:'lw5', title:'Performance basics', note:'Client-side caching, Lightning Data Service, avoiding unnecessary Apex round-trips.', tag:'~45m'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~5 h')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~5 h')}
+        <h2 class="section-h">Component anatomy</h2>
+        <p class="body-text">An LWC is three files sharing a name: an HTML template, a JavaScript class, and metadata (<code>.js-meta.xml</code>) declaring where it's allowed to be placed (App Builder page, record page, Experience Cloud site, Flow screen). It's standard web-component technology underneath — no proprietary framework to learn beyond a handful of Salesforce-specific decorators.</p>
+        <h2 class="section-h">The three decorators</h2>
+        <ul class="plain-list">
+          <li><b>@api</b> — marks a property or method public; this is how a parent component passes data down to a child.</li>
+          <li><b>@track</b> — forces re-render on mutation of an object/array's internal fields. Rarely needed today: since Spring '20 the framework reactively tracks simple field reassignment automatically.</li>
+          <li><b>@wire</b> — binds a component property to a reactive data source (an Apex method or a platform wire adapter like <code>getRecord</code>). The component re-renders automatically whenever the underlying data changes — no manual refresh call.</li>
+        </ul>
+        <p class="body-text">The architectural decision that matters more than any of the syntax: prefer <b>Lightning Data Service</b> (via <code>getRecord</code>/<code>updateRecord</code> wire adapters) over a custom Apex controller whenever you're just doing record CRUD. LDS gives you client-side caching and offline support for free; a custom Apex round-trip for every field read throws that away.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -204,7 +241,12 @@ const SHEETS = [
       {id:'da4', title:'Data migration patterns', note:'Bulk API vs Data Loader vs ETL tooling; sequencing for referential integrity.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~4.5 h · Architect Journey domain')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~4.5 h · Architect Journey domain')}
+        <h2 class="section-h">When "large" becomes a design constraint</h2>
+        <p class="body-text">Salesforce calls it a <b>Large Data Volume (LDV)</b> concern once an object crosses roughly the low millions of records — the exact number matters less than the symptom: list views, reports, and SOQL queries that were instant at 10,000 records start timing out or scanning the whole table. A query is <b>selective</b> when it can use an index to avoid a full table scan; the platform auto-indexes Id, Name, OwnerId, and most lookup/master-detail fields, and you can add custom indexes on other fields you filter by often. <b>Skinny tables</b> (Salesforce-managed, requested via support) are a denormalised copy of a subset of fields, used when a query joins across many fields and standard indexing isn't enough.</p>
+        <h2 class="section-h">Archiving & Big Objects</h2>
+        <p class="body-text">Not everything needs to stay in the standard, fully-indexed, fully-queryable object forever. <b>Big Objects</b> are built for the other end of the scale — billions of records, immutable audit/history-style data, queried by indexed key rather than ad hoc filters. The design question an architect actually answers: does this data need to support arbitrary reporting (keep it in a standard object, manage volume actively), or just needs to be retrievable by a known key for compliance/history (move it to a Big Object or an external archive)?</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -220,7 +262,16 @@ const SHEETS = [
       {id:'sv5', title:'Apex managed sharing', note:'The escape hatch for visibility logic too dynamic for declarative sharing — and why it should be rare, not default.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~4.75 h · Architect Journey domain')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~4.75 h · Architect Journey domain')}
+        <h2 class="section-h">The four levers, in the order you reach for them</h2>
+        <ol class="step-list">
+          <li><b>Organization-Wide Defaults</b> — the ceiling. Set it to the most restrictive level the business can live with, always.</li>
+          <li><b>Role hierarchy</b> — grants access upward through management chains automatically. Free, but coarse; only fits when "my manager can see my records" is actually the rule.</li>
+          <li><b>Sharing rules</b> — owner-based ("everyone in Group X gets access to Owner Y's records") or criteria-based ("any record where Region = APAC"). The workhorse for most real requirements.</li>
+          <li><b>Manual / Apex managed sharing</b> — one-off or fully programmatic. Manual sharing doesn't scale past a handful of ad hoc grants; Apex managed sharing is for visibility logic too dynamic for a criteria rule to express, and it's the hardest of the four to review, so it should be the last resort, not the first idea.</li>
+        </ol>
+        <p class="body-text">The review-board tell of a weak answer is naming a mechanism before naming the OWD. Always state the default-private posture first, then justify each widening step against a specific requirement.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -234,7 +285,11 @@ const SHEETS = [
       {id:'i3', title:'External identity & SSO', note:'Maps closely to Entra ID / broader IAM background — deepens next in Identity & Access Management.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~3 h · strength area · Architect Journey domain')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~3 h · strength area · Architect Journey domain')}
+        <h2 class="section-h">Inbound vs outbound, sync vs async</h2>
+        <p class="body-text">Salesforce as the <b>caller</b> uses <b>Named Credentials</b> (endpoint + auth bundled, so Apex never handles raw tokens) to hit an external REST or SOAP API — synchronous, inside the same transaction, subject to the same limits as everything else. Salesforce as the <b>callee</b> exposes Apex REST/SOAP endpoints or standard REST API for external systems to call in. Both are synchronous and tightly coupled — the caller waits, and a slow or down endpoint on either side blocks the transaction.</p>
+        <p class="body-text"><b>Platform Events</b> decouple that: a publisher fires an event and moves on; any number of subscribers (internal Apex triggers/flows, or external systems via the CometD-based streaming API) pick it up independently, on their own schedule, without blocking the publisher. <b>Change Data Capture</b> is the same subscribe model but auto-generated from record changes rather than an event you explicitly publish. For moving large volumes rather than individual events, the <b>Bulk API</b> (async, chunked, built for millions of records) replaces the standard REST API, which is built for one-record-at-a-time traffic.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -250,7 +305,15 @@ const SHEETS = [
       {id:'iam5', title:'Experience Cloud identity licensing', note:'Customer vs partner identity models and how they change the access design.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~5.25 h · Architect Journey domain')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~5.25 h · Architect Journey domain')}
+        <h2 class="section-h">OAuth flows — matched to who's present</h2>
+        <ul class="plain-list">
+          <li><b>Web Server Flow</b> — a human is present in a browser; the standard "Login with Salesforce" redirect-and-callback pattern.</li>
+          <li><b>JWT Bearer Flow</b> — no human present, server-to-server. A pre-registered certificate proves identity; used for scheduled integrations and system accounts.</li>
+          <li><b>Device Flow</b> — no browser available on the device itself (a TV app, a CLI tool); the user authorises on a second device using a displayed code.</li>
+        </ul>
+        <p class="body-text">A <b>Connected App</b> is the registration record for any external system that authenticates against Salesforce — it defines the callback URL, the OAuth scopes granted, and (for JWT flows) the trusted certificate. <b>SSO</b> typically means Salesforce trusts an external Identity Provider via SAML or OpenID Connect; <b>Just-in-Time provisioning</b> auto-creates or updates the Salesforce user record on that first federated login, so accounts don't need to be pre-created by an admin. Session security (login IP ranges, MFA enforcement, session timeout, "high-assurance" step-up for sensitive actions) sits on top of all of this as a separate, stackable layer.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -263,7 +326,12 @@ const SHEETS = [
       {id:'g2', title:'Architecture governance on Salesforce', note:'Design reviews, quality gates, target-state roadmaps.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~2 h')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~2 h')}
+        <h2 class="section-h">Where the clouds overlap</h2>
+        <p class="body-text"><b>Sales Cloud</b> is built around Lead → Opportunity → forecast. <b>Service Cloud</b> adds Case, Entitlements, and omni-channel routing on top of the same Account/Contact foundation. <b>Experience Cloud</b> is the external-facing layer — customer or partner portals — built on either. All three commonly sit in one org and share Account and Contact, which is exactly where governance disputes start: whose process owns a field, whose automation fires first, whose page layout wins. That's a governance problem, not a technical one — the platform doesn't arbitrate it for you.</p>
+        <h2 class="section-h">What "governance" means in practice here</h2>
+        <p class="body-text">Concretely: a named design authority with tie-breaking power, a lightweight design-review checkpoint before a team builds on shared objects, and a short written artefact (an ADR, see the Artefact Studio) recording who owns what and why — reviewed and re-confirmed whenever a new cloud or team joins the org. Without this, the failure mode is always the same: two teams each optimise their own cloud's automation on Account, and six months later nobody can predict what happens when a record is saved.</p>
+        ${itemList(this)}`;
     }
   },
   {
@@ -279,7 +347,17 @@ const SHEETS = [
       {id:'dl5', title:'Branching strategy for metadata', note:'Trunk-based vs Gitflow applied to org metadata — where it breaks down and why.', tag:'~1h'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~6 h · Architect Journey domain')}${itemList(this)}
+      return `${sheetHeader(this)}${sheetMeta('~6 h · Architect Journey domain')}
+        <h2 class="section-h">Sandbox tiers</h2>
+        <ul class="plain-list">
+          <li><b>Developer / Developer Pro</b> — metadata only, no production data, refreshable daily. Individual build and unit testing.</li>
+          <li><b>Partial Copy</b> — metadata plus a sampled data subset, refreshable every 5 days. Integration and QA testing against realistic-but-small data.</li>
+          <li><b>Full</b> — a complete copy of production data and metadata, refreshable every 29 days. UAT, performance testing, and staging.</li>
+        </ul>
+        <p class="body-text">A release pipeline threads through these in order: build in Developer, integrate in Partial Copy, validate in Full, then deploy to production. Skipping straight to Full for daily development is the most common sandbox-strategy mistake — the refresh cadence makes it unusable for fast iteration.</p>
+        <h2 class="section-h">Source-driven development</h2>
+        <p class="body-text">The older model treats a sandbox org itself as the source of truth — build in the org, retrieve metadata into a change set, promote it up. The modern model inverts that: version-controlled metadata (via <b>Salesforce CLI / SFDX</b>) is the source of truth, and orgs — including production — are disposable, rebuildable targets. That shift is what makes real CI/CD possible: a pipeline (DevOps Center, or third-party tooling like Gearset/Copado/GitHub Actions) validates and deploys straight from a Git branch, with peer review happening on the pull request rather than by eyeballing a change set.</p>
+        ${itemList(this)}
         <div class="callout">
           <b>This is the domain to over-index on —</b> it's explicitly named in most Solution Architect job descriptions ("Agile and product-based delivery... DevOps or CI/CD practices") and rarely covered by generalist Trailhead study plans.
         </div>`;
@@ -299,7 +377,11 @@ const SHEETS = [
       {id:'ag6', title:'Agent Customization: Quick Look badge', note:'', tag:'+100 pts'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('~5 h · +2,100 pts')}${itemList(this)}`;
+      return `${sheetHeader(this)}${sheetMeta('~5 h · +2,100 pts')}
+        <h2 class="section-h">Why this belongs in the core path now</h2>
+        <p class="body-text">Agentforce adds a new architectural layer on top of everything in this workspace so far: autonomous agents that read data, call Apex/Flow as tools, and take action within guardrails you design. That means the sharing model, the automation you built, and the integration patterns you chose don't go away — an agent inherits the running user's permissions and calls the same declarative/programmatic building blocks as any other automation. The new design questions are about scope (what is this agent allowed to touch), grounding (what data it's allowed to reason over), and escalation (when it hands off to a human). <b>Data 360</b> is the unified data layer underneath, giving agents (and everything else) one consistent view across what were previously separate data sources.</p>
+        <p class="body-text">Treat this domain as evolving faster than the rest — verify current Trailhead content before relying on specifics, and focus study time on the architectural pattern (permission scoping, action design, human-in-the-loop) over any single product screen.</p>
+        ${itemList(this)}`;
     }
   },
   {
