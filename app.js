@@ -246,10 +246,10 @@ const SHEETS = [
     title: 'Discover the Salesforce Architect role',
     lede: 'Orient to what the role actually does before investing in platform mechanics — responsibilities, where it sits relative to admin/dev, and how it is expanding.',
     items: [
-      {id:'r1', title:'Read "What is a Salesforce Architect?"', note:'Role definition and career pathway overview.'},
-      {id:'r2', title:'Complete Salesforce Architect: Quick Look badge', note:'Core responsibilities and required competencies.', tag:'+100 pts'},
+      {id:'r1', title:'Read "What is a Salesforce Architect?"', note:'Role definition and career pathway overview.', url:'https://trailhead.salesforce.com/content/learn/modules/salesforce-architects'},
+      {id:'r2', title:'Complete Salesforce Architect: Quick Look badge', note:'Core responsibilities and required competencies.', tag:'+100 pts', url:'https://trailhead.salesforce.com/content/learn/modules/salesforce-architect-role-quick-look'},
       {id:'r3', title:'Read "How the Architect Role Is Evolving in the Agentic AI Era"', note:'Where responsibilities are expanding fastest right now.'},
-      {id:'r4', title:'Read "Think Like an Architect"', note:'Expert analysis of real-world design scenarios — the closest thing to a worked example.'},
+      {id:'r4', title:'Read "Think Like an Architect"', note:'Expert analysis of real-world design scenarios — the closest thing to a worked example.', url:'https://architect.salesforce.com/'},
     ],
     render(){
       return `${sheetHeader(this)}${sheetMeta('~20 min · +100 pts')}
@@ -269,9 +269,9 @@ const SHEETS = [
     title: 'Platform foundations',
     lede: 'Org structure, data model, and the security model — the vocabulary every later stage assumes you already have.',
     items: [
-      {id:'f1', title:'Salesforce Platform Basics trail', note:'Orgs, objects, fields, records — the core vocabulary.', tag:'~2h'},
-      {id:'f2', title:'Data model & relationships', note:'Lookup vs master-detail, junction objects, schema builder.', tag:'~1.5h'},
-      {id:'f3', title:'Security & sharing model — the basics', note:'Profiles, permission sets, org-wide defaults, sharing rules. Deepens later in Sharing & Visibility Design.', tag:'~2h'},
+      {id:'f1', title:'Salesforce Platform Basics trail', note:'Orgs, objects, fields, records — the core vocabulary.', tag:'~2h', url:'https://trailhead.salesforce.com/content/learn/trails/force_com_admin_beginner'},
+      {id:'f2', title:'Data model & relationships', note:'Lookup vs master-detail, junction objects, schema builder.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/data_modeling'},
+      {id:'f3', title:'Security & sharing model — the basics', note:'Profiles, permission sets, org-wide defaults, sharing rules. Deepens later in Sharing & Visibility Design.', tag:'~2h', url:'https://trailhead.salesforce.com/content/learn/modules/data_security'},
     ],
     render(){
       return `${sheetHeader(this)}${sheetMeta('~5.5 h')}
@@ -288,7 +288,7 @@ const SHEETS = [
     title: 'Automation & declarative tools',
     lede: 'Flow is the single most likely concrete example a hiring panel — or the exam — will probe.',
     items: [
-      {id:'a1', title:'Flow Builder fundamentals', note:'Screen flows, record-triggered flows, core logic.', tag:'~2h'},
+      {id:'a1', title:'Flow Builder fundamentals', note:'Screen flows, record-triggered flows, core logic.', tag:'~2h', url:'https://trailhead.salesforce.com/content/learn/modules/flow-basics'},
       {id:'a2', title:'When to use Flow vs Apex', note:'A framing you can argue confidently without being a developer.', tag:'~30m'},
     ],
     render(){
@@ -306,12 +306,12 @@ const SHEETS = [
     title: 'Apex & programmatic architecture',
     lede: "An architect doesn't need to live in code, but has to judge it: bulkification, limits, and when programmatic is the right call at all.",
     items: [
-      {id:'ax1', title:'Apex fundamentals', note:'Classes, triggers, collections, SOQL/SOSL basics.', tag:'~2h'},
+      {id:'ax1', title:'Apex fundamentals', note:'Classes, triggers, collections, SOQL/SOSL basics.', tag:'~2h', url:'https://trailhead.salesforce.com/content/learn/modules/apex_database'},
       {id:'ax2', title:'Governor limits', note:'The constraint set that shapes every design decision on the platform — SOQL/DML limits, heap size, CPU time.', tag:'~1h'},
-      {id:'ax3', title:'Trigger framework pattern', note:'One trigger per object, delegated to a handler class — why this is the default recommendation, not a style preference.', tag:'~1h'},
+      {id:'ax3', title:'Trigger framework pattern', note:'One trigger per object, delegated to a handler class — why this is the default recommendation, not a style preference.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/apex_triggers'},
       {id:'ax4', title:'Bulkification discipline', note:'Why loops with SOQL/DML inside them are the single most common review-board failure mode.', tag:'~45m'},
-      {id:'ax5', title:'Async Apex patterns', note:'Future methods vs Queueable vs Batch vs Scheduled — matching the tool to volume and latency needs.', tag:'~1.5h'},
-      {id:'ax6', title:'Testing discipline', note:'Test classes, meaningful assertions vs coverage theatre, mocking with Test.isRunningTest().', tag:'~1h'},
+      {id:'ax5', title:'Async Apex patterns', note:'Future methods vs Queueable vs Batch vs Scheduled — matching the tool to volume and latency needs.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/asynchronous_apex'},
+      {id:'ax6', title:'Testing discipline', note:'Test classes, meaningful assertions vs coverage theatre, mocking with Test.isRunningTest().', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/apex_testing'},
     ],
     render(){
       return `${sheetHeader(this)}${sheetMeta('~7 h')}
@@ -338,8 +338,8 @@ const SHEETS = [
     title: 'Lightning Web Components architecture',
     lede: 'The modern UI layer — explicitly named in most Salesforce architect job descriptions alongside Apex and Flow.',
     items: [
-      {id:'lw1', title:'LWC component model', note:'Standard web components + Salesforce-specific decorators: @api, @track, @wire.', tag:'~1.5h'},
-      {id:'lw2', title:'Wire service vs imperative Apex calls', note:'Reactive data binding vs on-demand calls — when each is appropriate.', tag:'~1h'},
+      {id:'lw1', title:'LWC component model', note:'Standard web components + Salesforce-specific decorators: @api, @track, @wire.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/lightning-web-components-basics'},
+      {id:'lw2', title:'Wire service vs imperative Apex calls', note:'Reactive data binding vs on-demand calls — when each is appropriate.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/lightning-web-components-and-salesforce-data'},
       {id:'lw3', title:'LWC vs Aura vs Flow vs declarative', note:'The decision ladder — start declarative, escalate only when the requirement forces it.', tag:'~45m'},
       {id:'lw4', title:'Where components live', note:'Lightning App Builder pages, Experience Cloud sites, Flow screen components, utility bar.', tag:'~1h'},
       {id:'lw5', title:'Performance basics', note:'Client-side caching, Lightning Data Service, avoiding unnecessary Apex round-trips.', tag:'~45m'},
@@ -364,9 +364,9 @@ const SHEETS = [
     title: 'Data architecture & management',
     lede: 'One of the five official Architect Journey domains. The questions here are about scale and lifecycle, not just schema.',
     items: [
-      {id:'da1', title:'Large Data Volume (LDV) strategy', note:'Selective queries, indexing (standard and custom), skinny tables, when record counts start changing your design.', tag:'~1.5h'},
-      {id:'da2', title:'Archiving & Big Objects', note:'What to keep queryable vs what to archive, and the platform-native tools for each.', tag:'~1h'},
-      {id:'da3', title:'Master data & system-of-record decisions', note:'Which system owns the golden record when the same entity exists in Salesforce and elsewhere — the recurring enterprise-architecture question, Salesforce-flavoured.', tag:'~1h'},
+      {id:'da1', title:'Large Data Volume (LDV) strategy', note:'Selective queries, indexing (standard and custom), skinny tables, when record counts start changing your design.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/large-data-volumes'},
+      {id:'da2', title:'Archiving & Big Objects', note:'What to keep queryable vs what to archive, and the platform-native tools for each.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/big_objects'},
+      {id:'da3', title:'Master data & system-of-record decisions', note:'Which system owns the golden record when the same entity exists in Salesforce and elsewhere — the recurring enterprise-architecture question, Salesforce-flavoured.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/big-data-strategy'},
       {id:'da4', title:'Data migration patterns', note:'Bulk API vs Data Loader vs ETL tooling; sequencing for referential integrity.', tag:'~1h'},
     ],
     render(){
@@ -384,10 +384,10 @@ const SHEETS = [
     title: 'Sharing & visibility design',
     lede: 'Its own Architect Journey certification domain — "who can see what, and why" as a first-class design problem, not an afterthought.',
     items: [
-      {id:'sv1', title:'OWD-first design discipline', note:'Start private, open deliberately — the default posture and why reviewers check for it first.', tag:'~30m'},
-      {id:'sv2', title:'Role hierarchy vs sharing rules vs manual sharing', note:'The decision framework for which mechanism to reach for, and when stacking them creates unreviewable complexity.', tag:'~1.5h'},
+      {id:'sv1', title:'OWD-first design discipline', note:'Start private, open deliberately — the default posture and why reviewers check for it first.', tag:'~30m', url:'https://trailhead.salesforce.com/content/learn/modules/data_security'},
+      {id:'sv2', title:'Role hierarchy vs sharing rules vs manual sharing', note:'The decision framework for which mechanism to reach for, and when stacking them creates unreviewable complexity.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/data_security'},
       {id:'sv3', title:'Restriction rules & scoping rules', note:'Newer, more surgical visibility tools — when they replace a sharing-rule sprawl.', tag:'~45m'},
-      {id:'sv4', title:'Territory management basics', note:'Visibility driven by account assignment rather than ownership.', tag:'~1h'},
+      {id:'sv4', title:'Territory management basics', note:'Visibility driven by account assignment rather than ownership.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/advanced-territory-management'},
       {id:'sv5', title:'Apex managed sharing', note:'The escape hatch for visibility logic too dynamic for declarative sharing — and why it should be rare, not default.', tag:'~1h'},
     ],
     render(){
@@ -400,7 +400,10 @@ const SHEETS = [
           <li><b>Manual / Apex managed sharing</b> — one-off or fully programmatic. Manual sharing doesn't scale past a handful of ad hoc grants; Apex managed sharing is for visibility logic too dynamic for a criteria rule to express, and it's the hardest of the four to review, so it should be the last resort, not the first idea.</li>
         </ol>
         <p class="body-text">The review-board tell of a weak answer is naming a mechanism before naming the OWD. Always state the default-private posture first, then justify each widening step against a specific requirement.</p>
-        ${itemList(this)}`;
+        ${itemList(this)}
+        <div class="callout">
+          <b>Official deep dive —</b> <a href="https://architect.salesforce.com/fundamentals/platform-sharing-architecture" target="_blank" rel="noopener">Salesforce Architecture Center: Platform Sharing Architecture</a> — the authoritative fundamentals page this whole sheet is condensed from.
+        </div>`;
     }
   },
   {
@@ -409,8 +412,8 @@ const SHEETS = [
     title: 'Integration architecture',
     lede: 'The domain where prior enterprise architecture experience transfers most directly — this is mostly re-labelling, not re-learning.',
     items: [
-      {id:'i1', title:'REST & SOAP APIs on the platform', note:'How Salesforce exposes and consumes web services.', tag:'~1h'},
-      {id:'i2', title:'Platform Events & event-driven patterns', note:"The platform's take on event-driven architecture.", tag:'~1h'},
+      {id:'i1', title:'REST & SOAP APIs on the platform', note:'How Salesforce exposes and consumes web services.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/api_basics'},
+      {id:'i2', title:'Platform Events & event-driven patterns', note:"The platform's take on event-driven architecture.", tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/platform_events_basics'},
       {id:'i3', title:'External identity & SSO', note:'Maps closely to Entra ID / broader IAM background — deepens next in Identity & Access Management.', tag:'~1h'},
     ],
     render(){
@@ -427,11 +430,11 @@ const SHEETS = [
     title: 'Identity & access management',
     lede: 'Its own Architect Journey domain, and the part of "external identity & SSO" a solution-architect conversation will actually drill into.',
     items: [
-      {id:'iam1', title:'OAuth 2.0 flows on the platform', note:'Web server flow, JWT bearer flow, device flow — which fits server-to-server vs user-present scenarios.', tag:'~1.5h'},
+      {id:'iam1', title:'OAuth 2.0 flows on the platform', note:'Web server flow, JWT bearer flow, device flow — which fits server-to-server vs user-present scenarios.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/identity_basics'},
       {id:'iam2', title:'Connected Apps & scopes', note:'Registering external systems, scoping what they can touch.', tag:'~1h'},
-      {id:'iam3', title:'SSO & Just-in-Time provisioning', note:'Federating identity from an external IdP and auto-creating/updating users on login.', tag:'~1h'},
+      {id:'iam3', title:'SSO & Just-in-Time provisioning', note:'Federating identity from an external IdP and auto-creating/updating users on login.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/identity_basics'},
       {id:'iam4', title:'MFA & session security policies', note:'Login IP ranges, session timeout, high-assurance transactions.', tag:'~45m'},
-      {id:'iam5', title:'Experience Cloud identity licensing', note:'Customer vs partner identity models and how they change the access design.', tag:'~1h'},
+      {id:'iam5', title:'Experience Cloud identity licensing', note:'Customer vs partner identity models and how they change the access design.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/identity-for-mobile-centric-customers'},
     ],
     render(){
       return `${sheetHeader(this)}${sheetMeta('~5.25 h · Architect Journey domain')}
@@ -451,7 +454,7 @@ const SHEETS = [
     title: 'Multi-cloud & governance',
     lede: 'How Sales, Service and Experience Cloud relate, and how architecture governance is actually exercised on-platform.',
     items: [
-      {id:'g1', title:'Sales, Service & Experience Cloud overview', note:'What each cloud is for, at discussion-level fluency.', tag:'~1h'},
+      {id:'g1', title:'Sales, Service & Experience Cloud overview', note:'What each cloud is for, at discussion-level fluency.', tag:'~1h', url:'https://trailhead.salesforce.com/content/learn/modules/community_cloud_basics'},
       {id:'g2', title:'Architecture governance on Salesforce', note:'Design reviews, quality gates, target-state roadmaps.', tag:'~1h'},
     ],
     render(){
@@ -470,8 +473,8 @@ const SHEETS = [
     lede: 'The Architect Journey domain most job descriptions name directly as "Agile / DevOps / CI-CD" — and the one most self-taught architects skip.',
     items: [
       {id:'dl1', title:'Sandbox strategy', note:'Dev, Dev Pro, Partial Copy, Full — what each is for and how a release pipeline threads through them.', tag:'~1h'},
-      {id:'dl2', title:'Source-driven development & SFDX/CLI', note:'Org-based vs package-based development; metadata as version-controlled source of truth.', tag:'~1.5h'},
-      {id:'dl3', title:'CI/CD pipeline design', note:'DevOps Center vs third-party tooling (Gearset, Copado, GitHub Actions) — the shape of an automated pipeline either way.', tag:'~1.5h'},
+      {id:'dl2', title:'Source-driven development & SFDX/CLI', note:'Org-based vs package-based development; metadata as version-controlled source of truth.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/salesforce-application-lifecycle-management-quick-look'},
+      {id:'dl3', title:'CI/CD pipeline design', note:'DevOps Center vs third-party tooling (Gearset, Copado, GitHub Actions) — the shape of an automated pipeline either way.', tag:'~1.5h', url:'https://trailhead.salesforce.com/content/learn/modules/devops-center-quick-look'},
       {id:'dl4', title:'Change & release governance', note:'Change sets vs packages, approval gates, rollback strategy.', tag:'~1h'},
       {id:'dl5', title:'Branching strategy for metadata', note:'Trunk-based vs Gitflow applied to org metadata — where it breaks down and why.', tag:'~1h'},
     ],
@@ -694,7 +697,9 @@ const SHEETS = [
       return `${sheetHeader(this)}
         <ul class="resource-list">
           ${resourceItem('Trailhead — Build Your Architect Career', 'Official trail; the source for the roadmap in this workspace.', 'https://trailhead.salesforce.com/content/learn/trails/salesforce-architect-careers', 'Open trail')}
+          ${resourceItem('Trailhead — Architect Overview', 'The master landing page for the entire architect credential family — start here on the Trailhead side.', 'https://trailhead.salesforce.com/en/credentials/architectoverview/', 'Open overview')}
           ${resourceItem('Trailhead Credentials Directory', 'Full credentials directory and the Architect Journey trailmix — bookmark and work over months.', 'https://trailhead.salesforce.com/credentials', 'Open directory')}
+          ${resourceItem('Salesforce Architecture Center', 'The official home of Salesforce architecture fundamentals, reference architectures, and the "Think Like an Architect" series — referenced directly in most Solution Architect job descriptions.', 'https://architect.salesforce.com/', 'Open Architecture Center')}
           ${resourceItem('Salesforce Dictionary — Dashboard', 'Terminology, certification prep, interview prep, learning paths, and a salary calculator in one place.', 'https://salesforcedictionary.com/dashboard', 'Open dashboard')}
           ${resourceItem('Architect Journey Trailmix', 'Built specifically for the architect certification path.', 'https://trailhead.salesforce.com/users/strailhead/trailmixes/architect-trailmix-master', 'Open trailmix')}
         </ul>`;
