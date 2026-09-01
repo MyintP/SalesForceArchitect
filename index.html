@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Path to Salesforce Architect</title>
+<meta name="description" content="A structured roadmap from platform fundamentals to Salesforce Architect, built from the official Trailhead architect trail and Salesforce Dictionary resources.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root{
+    --canvas:#122038;
+    --panel:#182B4A;
+    --panel-2:#1E345A;
+    --grid-line:rgba(122,168,222,0.10);
+    --draft:#7AA8DE;
+    --draft-dim:#4E6E96;
+    --amber:#E8A33D;
+    --amber-dim:#8A6329;
+    --ink:#EDEFF5;
+    --ink-muted:#93A0BE;
+    --ink-faint:#5C6B8C;
+    --green:#7FBF8F;
+    --green-dim:#3D5C46;
+    --border:#2C4269;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--canvas);}
+  .sheet{
+    font-family:'IBM Plex Sans',sans-serif;
+    color:var(--ink);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:24px 24px;
+    padding:20px 16px 40px;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .titleblock{
+    border:1px solid var(--border);
+    padding:16px 18px;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .titleblock::before{
+    content:'';
+    position:absolute; top:6px; left:6px; right:6px; bottom:6px;
+    border:1px solid var(--grid-line);
+    pointer-events:none;
+  }
+  .doc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    color:var(--draft);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Spectral',serif;
+    font-weight:500;
+    font-size:26px;
+    line-height:1.25;
+    margin:0 0 8px;
+    color:var(--ink);
+  }
+  .sub{
+    font-size:14px;
+    color:var(--ink-muted);
+    line-height:1.55;
+    margin:0;
+    max-width:56ch;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    margin-top:14px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+  }
+  .meta-row span b{color:var(--draft);font-weight:500;}
+
+  .section-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    color:var(--amber);
+    margin:0 0 10px;
+    text-transform:uppercase;
+  }
+
+  .stage{
+    position:relative;
+    padding-left:28px;
+    margin-bottom:6px;
+  }
+  .stage::before{
+    content:'';
+    position:absolute;
+    left:9px; top:30px; bottom:-6px;
+    width:1px;
+    background:repeating-linear-gradient(to bottom, var(--draft-dim) 0 4px, transparent 4px 8px);
+  }
+  .stage:last-of-type::before{display:none;}
+  .stage-num{
+    position:absolute;
+    left:0; top:2px;
+    width:19px; height:19px;
+    border:1px solid var(--draft);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--draft);
+    background:var(--canvas);
+    z-index:1;
+  }
+  .stage-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    margin-bottom:16px;
+    padding:14px 16px 16px;
+  }
+  .stage-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .stage-title{
+    font-family:'Spectral',serif;
+    font-size:16.5px;
+    font-weight:500;
+    margin:0;
+    color:var(--ink);
+  }
+  .stage-when{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.04em;
+    color:var(--amber);
+    white-space:nowrap;
+  }
+  .stage-brief{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.55;
+    margin:6px 0 10px;
+  }
+  .stage-items{
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  .stage-items li{
+    font-size:12.5px;
+    color:var(--ink);
+    line-height:1.6;
+    padding:6px 0;
+    border-top:1px solid var(--border);
+    display:flex;
+    gap:8px;
+  }
+  .stage-items li:first-child{border-top:none;}
+  .stage-items li::before{
+    content:'\2192';
+    color:var(--draft-dim);
+    flex-shrink:0;
+  }
+  .stage-items li b{color:var(--ink);font-weight:500;}
+  .stage-items li span.note{color:var(--ink-muted);}
+
+  .cert-track{
+    background:var(--panel);
+    border-left:2px solid var(--amber);
+    padding:14px 16px;
+    margin-bottom:16px;
+  }
+  .cert-row{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:7px 0;
+    font-size:12.5px;
+    line-height:1.5;
+  }
+  .cert-row .step{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--amber);
+    flex-shrink:0;
+    width:18px;
+  }
+  .cert-row b{color:var(--ink);font-weight:500;}
+  .cert-row span.detail{color:var(--ink-muted);}
+
+  .resource-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  @media(min-width:520px){
+    .resource-grid{grid-template-columns:1fr 1fr;}
+  }
+  .resource-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:12px 14px;
+  }
+  .resource-card .rlabel{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.05em;
+    color:var(--draft);
+    margin:0 0 6px;
+  }
+  .resource-card p{
+    font-size:12px;
+    color:var(--ink-muted);
+    line-height:1.55;
+    margin:0 0 8px;
+  }
+  .resource-card a{
+    font-size:12px;
+    color:var(--draft);
+    text-decoration:none;
+  }
+  .resource-card a:hover{text-decoration:underline;}
+
+  .cta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:6px;
+  }
+  .cta-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--ink);
+    text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:9px 14px;
+  }
+  .cta-btn:hover{border-color:var(--draft);color:var(--draft);}
+
+  footer{
+    margin-top:24px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--ink-faint);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  footer a{color:var(--ink-faint);}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <p class="doc-label">DRG NO. SF-CAREER-01 &nbsp;&middot;&nbsp; REV A</p>
+    <h1>Career path to Salesforce Architect</h1>
+    <p class="sub">A structured roadmap from platform fundamentals to the architect track — built from the official Trailhead architect trail and cross-referenced against Salesforce Dictionary's certification and learning resources.</p>
+    <div class="meta-row">
+      <span>SCALE: <b>foundations before certifications</b></span>
+      <span>DRAWN FOR: <b>Phil Myint</b></span>
+    </div>
+  </div>
+
+  <p class="section-label">01 &mdash; Roadmap</p>
+
+  <div class="stage">
+    <div class="stage-num">1</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Discover the architect role</p>
+        <span class="stage-when">~20 min</span>
+      </div>
+      <p class="stage-brief">Orient to what a Salesforce Architect actually does before investing in the platform mechanics.</p>
+      <ul class="stage-items">
+        <li><b>What is a Salesforce Architect?</b> <span class="note">— role &amp; career pathway overview</span></li>
+        <li><b>Salesforce Architect: Quick Look badge</b> <span class="note">— responsibilities and core competencies</span></li>
+        <li><b>How the Architect Role Is Evolving in the Agentic AI Era</b> <span class="note">— where the role is heading</span></li>
+        <li><b>Think Like an Architect</b> <span class="note">— expert analysis of real design scenarios</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">2</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Platform foundations</p>
+        <span class="stage-when">~5.5 h</span>
+      </div>
+      <p class="stage-brief">Org structure, data model, and the security model — the vocabulary every later stage assumes.</p>
+      <ul class="stage-items">
+        <li><b>Salesforce Platform Basics trail</b> <span class="note">— orgs, objects, fields, records</span></li>
+        <li><b>Data model &amp; relationships</b> <span class="note">— lookup vs master-detail, junction objects, schema builder</span></li>
+        <li><b>Security &amp; sharing model</b> <span class="note">— profiles, permission sets, org-wide defaults, sharing rules</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">3</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Automation &amp; declarative tools</p>
+        <span class="stage-when">~2.5 h</span>
+      </div>
+      <p class="stage-brief">Flow is the most likely concrete example a hiring panel or exam will probe.</p>
+      <ul class="stage-items">
+        <li><b>Flow Builder fundamentals</b> <span class="note">— screen flows, record-triggered flows, core logic</span></li>
+        <li><b>When to use Flow vs Apex</b> <span class="note">— a framing you can argue without being a developer</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">4</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Integration architecture</p>
+        <span class="stage-when">~3 h</span>
+      </div>
+      <p class="stage-brief">Where prior enterprise architecture experience transfers most directly.</p>
+      <ul class="stage-items">
+        <li><b>REST &amp; SOAP APIs on the platform</b> <span class="note">— how Salesforce exposes and consumes web services</span></li>
+        <li><b>Platform Events &amp; event-driven patterns</b> <span class="note">— the platform's take on event-driven architecture</span></li>
+        <li><b>External identity &amp; SSO</b> <span class="note">— maps closely to Entra ID / IAM work</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">5</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Multi-cloud &amp; governance</p>
+        <span class="stage-when">~2 h</span>
+      </div>
+      <p class="stage-brief">How the clouds relate to each other, and how architecture governance is exercised on-platform.</p>
+      <ul class="stage-items">
+        <li><b>Sales, Service &amp; Experience Cloud overview</b> <span class="note">— what each is for, discussion-level fluency</span></li>
+        <li><b>Architecture governance on Salesforce</b> <span class="note">— design reviews, quality gates, target-state roadmaps</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">6</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Architect the agentic enterprise</p>
+        <span class="stage-when">~5 h &middot; +2,100 pts</span>
+      </div>
+      <p class="stage-brief">The newest, heaviest module on the official trail — where the role is expanding fastest.</p>
+      <ul class="stage-items">
+        <li><b>IT Architecture of the Agentic Enterprise</b> <span class="note">— system design for agent-driven orgs</span></li>
+        <li><b>The Agent Development Lifecycle</b></li>
+        <li><b>Agentic Patterns and Implementation with Agentforce</b></li>
+        <li><b>Data 360 Architecture</b> <span class="note">— unified data &amp; integration foundation</span></li>
+        <li><b>Technical Debt badge</b> <span class="note">— +2,000 pts, the trail's largest single badge</span></li>
+        <li><b>Agent Customization: Quick Look badge</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-num">7</div>
+    <div class="stage-card">
+      <div class="stage-head">
+        <p class="stage-title">Certification track</p>
+        <span class="stage-when">ongoing</span>
+      </div>
+      <p class="stage-brief">Not a sprint — layer credentials as depth in each domain solidifies.</p>
+      <div class="cert-track" style="margin:0;border-left:none;padding:0;">
+        <div class="cert-row"><span class="step">01</span><b>Administrator (ADM-201)</b><span class="detail">&nbsp;&mdash; the foundation cert nearly every path assumes</span></div>
+        <div class="cert-row"><span class="step">02</span><b>Platform App Builder</b><span class="detail">&nbsp;&mdash; declarative build depth</span></div>
+        <div class="cert-row"><span class="step">03</span><b>Architect Journey trailmix</b><span class="detail">&nbsp;&mdash; Data Architecture, Sharing &amp; Visibility, Platform Dev, Integration Architecture, Identity &amp; Access Management</span></div>
+        <div class="cert-row"><span class="step">04</span><b>Application / System Architect</b><span class="detail">&nbsp;&mdash; domain architect designations</span></div>
+        <div class="cert-row"><span class="step">05</span><b>Certified Technical Architect (CTA)</b><span class="detail">&nbsp;&mdash; the board-reviewed capstone</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">02 &mdash; Reference resources</p>
+
+  <div class="resource-grid">
+    <div class="resource-card">
+      <p class="rlabel">TRAILHEAD</p>
+      <p>Official "Build Your Architect Career on Salesforce" trail — the source for the roadmap above.</p>
+      <a href="https://trailhead.salesforce.com/content/learn/trails/salesforce-architect-careers" target="_blank" rel="noopener">Open trail &#8599;</a>
+    </div>
+    <div class="resource-card">
+      <p class="rlabel">TRAILHEAD CREDENTIALS</p>
+      <p>Full credentials directory and the Architect Journey trailmix — bookmark and work over months.</p>
+      <a href="https://trailhead.salesforce.com/credentials" target="_blank" rel="noopener">Open directory &#8599;</a>
+    </div>
+    <div class="resource-card">
+      <p class="rlabel">SALESFORCE DICTIONARY</p>
+      <p>Terminology, certification prep, interview prep, learning paths, and a salary calculator in one dashboard.</p>
+      <a href="https://salesforcedictionary.com/dashboard" target="_blank" rel="noopener">Open dashboard &#8599;</a>
+    </div>
+    <div class="resource-card">
+      <p class="rlabel">READINESS TRACKER</p>
+      <p>Personal interview-prep checklist bridging existing enterprise architecture experience into Salesforce fluency.</p>
+      <a href="salesforce_readiness_blueprint.html">Open tracker</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>Built from Trailhead + Salesforce Dictionary, cross-referenced 2026-09-01</span>
+    <span><a href="https://github.com/MyintP/SalesForceArchitect" target="_blank" rel="noopener">github.com/MyintP/SalesForceArchitect</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

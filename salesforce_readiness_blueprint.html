@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce Readiness Blueprint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root{
+    --canvas:#122038;
+    --panel:#182B4A;
+    --panel-2:#1E345A;
+    --grid-line:rgba(122,168,222,0.10);
+    --draft:#7AA8DE;
+    --draft-dim:#4E6E96;
+    --amber:#E8A33D;
+    --amber-dim:#8A6329;
+    --ink:#EDEFF5;
+    --ink-muted:#93A0BE;
+    --ink-faint:#5C6B8C;
+    --green:#7FBF8F;
+    --green-dim:#3D5C46;
+    --border:#2C4269;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--canvas);}
+  .sheet{
+    font-family:'IBM Plex Sans',sans-serif;
+    color:var(--ink);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:24px 24px;
+    padding:20px 16px 32px;
+    max-width:520px;
+    margin:0 auto;
+  }
+  .titleblock{
+    border:1px solid var(--border);
+    padding:14px 16px;
+    margin-bottom:18px;
+    position:relative;
+  }
+  .titleblock::before{
+    content:'';
+    position:absolute; top:6px; left:6px; right:6px; bottom:6px;
+    border:1px solid var(--grid-line);
+    pointer-events:none;
+  }
+  .doc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    color:var(--draft);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Spectral',serif;
+    font-weight:500;
+    font-size:22px;
+    line-height:1.25;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-muted);
+    line-height:1.5;
+    margin:0;
+  }
+  .meta-row{
+    display:flex;
+    gap:16px;
+    margin-top:12px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+  }
+  .meta-row span b{color:var(--draft);font-weight:500;}
+
+  .overall{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:12px 14px;
+    margin-bottom:20px;
+  }
+  .ring{width:52px;height:52px;flex-shrink:0;}
+  .overall-text{flex:1;}
+  .overall-text .label{font-size:11.5px;color:var(--ink-muted);margin:0 0 2px;}
+  .overall-text .count{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--ink);margin:0;}
+
+  .phase{
+    position:relative;
+    padding-left:26px;
+    margin-bottom:6px;
+  }
+  .phase::before{
+    content:'';
+    position:absolute;
+    left:9px; top:28px; bottom:-6px;
+    width:1px;
+    background:repeating-linear-gradient(to bottom, var(--draft-dim) 0 4px, transparent 4px 8px);
+  }
+  .phase:last-of-type::before{display:none;}
+  .phase-num{
+    position:absolute;
+    left:0; top:2px;
+    width:19px; height:19px;
+    border:1px solid var(--draft);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--draft);
+    background:var(--canvas);
+    z-index:1;
+  }
+  .phase-num.done{
+    border-color:var(--green);
+    color:var(--green);
+    background:var(--green-dim);
+  }
+  .phase-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    margin-bottom:16px;
+    overflow:hidden;
+  }
+  .phase-head{
+    padding:11px 14px 9px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .phase-title{
+    font-family:'Spectral',serif;
+    font-size:15.5px;
+    font-weight:500;
+    margin:0;
+    color:var(--ink);
+  }
+  .phase-when{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.04em;
+    color:var(--amber);
+    white-space:nowrap;
+  }
+  .phase-bar-track{
+    height:3px;
+    background:var(--panel-2);
+    margin:0 14px;
+  }
+  .phase-bar-fill{
+    height:100%;
+    background:var(--draft);
+    transition:width 0.25s ease;
+  }
+  .phase-body{
+    padding:10px 14px 14px;
+    display:none;
+  }
+  .phase-body.open{display:block;}
+  .phase-brief{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.55;
+    margin:2px 0 12px;
+  }
+  .item{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding:8px 0;
+    border-top:1px solid var(--border);
+  }
+  .item:first-child{border-top:none;}
+  .item input[type=checkbox]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:16px; height:16px;
+    border:1px solid var(--draft-dim);
+    margin-top:2px;
+    flex-shrink:0;
+    cursor:pointer;
+    position:relative;
+  }
+  .item input[type=checkbox]:checked{
+    background:var(--green-dim);
+    border-color:var(--green);
+  }
+  .item input[type=checkbox]:checked::after{
+    content:'';
+    position:absolute;
+    left:4px; top:1px;
+    width:5px; height:9px;
+    border:solid var(--green);
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  .item-text{flex:1;}
+  .item-title{
+    font-size:13px;
+    color:var(--ink);
+    margin:0 0 2px;
+    line-height:1.4;
+  }
+  .item-title.checked{color:var(--ink-faint);text-decoration:line-through;}
+  .item-note{
+    font-size:11.5px;
+    color:var(--ink-muted);
+    line-height:1.5;
+    margin:0;
+  }
+  .item-hours{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--ink-faint);
+    white-space:nowrap;
+    margin-top:2px;
+  }
+
+  .bridge{
+    background:var(--panel);
+    border-left:2px solid var(--amber);
+    padding:12px 14px;
+    margin-bottom:16px;
+  }
+  .bridge-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.05em;
+    color:var(--amber);
+    margin:0 0 8px;
+  }
+  .bridge-item{
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--ink-muted);
+    margin:0 0 8px;
+  }
+  .bridge-item:last-child{margin-bottom:0;}
+  .bridge-item b{color:var(--ink);font-weight:500;}
+
+  .notes-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:12px 14px;
+    margin-bottom:16px;
+  }
+  .notes-card label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.05em;
+    color:var(--draft);
+    margin-bottom:8px;
+  }
+  textarea{
+    width:100%;
+    min-height:70px;
+    background:var(--canvas);
+    border:1px solid var(--border);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:12.5px;
+    line-height:1.5;
+    padding:8px 10px;
+    resize:vertical;
+  }
+  textarea:focus{outline:1px solid var(--draft);}
+
+  .links{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-top:12px;
+  }
+  .links a{
+    font-size:12px;
+    color:var(--draft);
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .links a:hover{text-decoration:underline;}
+
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+  }
+  .reset-btn{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--ink-faint);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .reset-btn:hover{border-color:var(--ink-faint);}
+  .save-status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:var(--ink-faint);
+  }
+  .chev{
+    color:var(--draft-dim);
+    font-size:11px;
+    transition:transform 0.2s ease;
+  }
+  .chev.open{transform:rotate(90deg);}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <p class="doc-label">DRG NO. SF-READ-01 &nbsp;·&nbsp; REV A</p>
+    <h1>Salesforce readiness blueprint</h1>
+    <p class="sub">Bridging 30 years of enterprise architecture into Salesforce platform fluency, ahead of the Global Payments Solution Architect conversation.</p>
+    <div class="meta-row">
+      <span>SCALE: <b>practical over exhaustive</b></span>
+      <span>DRAWN FOR: <b>Phil Myint</b></span>
+    </div>
+  </div>
+
+  <div class="overall">
+    <svg class="ring" viewBox="0 0 52 52" id="ring">
+      <circle cx="26" cy="26" r="22" fill="none" stroke="#2C4269" stroke-width="4"></circle>
+      <circle cx="26" cy="26" r="22" fill="none" stroke="#E8A33D" stroke-width="4"
+        stroke-dasharray="138.2" stroke-dashoffset="138.2" stroke-linecap="round"
+        transform="rotate(-90 26 26)" id="ring-fill"></circle>
+    </svg>
+    <div class="overall-text">
+      <p class="label">Overall progress</p>
+      <p class="count" id="overall-count">0 / 0 items</p>
+    </div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="bridge">
+    <p class="bridge-label">TRANSLATION NOTES &mdash; WHAT ALREADY TRANSFERS</p>
+    <p class="bridge-item"><b>Integration patterns</b> &mdash; your REST/SOAP, event-driven and SSO work on Azure/AWS maps directly onto Salesforce's API, Platform Events and external identity model. The vocabulary changes; the architecture thinking doesn't.</p>
+    <p class="bridge-item"><b>Governance frameworks</b> &mdash; QGEA, design review boards and architecture decision records are the same discipline Salesforce calls governance gates and design authority. Lead with this in the interview.</p>
+    <p class="bridge-item"><b>Data & security architecture</b> &mdash; sharing models and object-level security are a new syntax for a familiar problem: who can see what, and why.</p>
+  </div>
+
+  <div class="notes-card">
+    <label>INTERVIEW PREP NOTES</label>
+    <textarea id="notes" placeholder="Jot down talking points, questions to ask the hiring manager, or things to double-check before the call."></textarea>
+  </div>
+
+  <div class="footer-row">
+    <span class="save-status" id="save-status">saved locally</span>
+    <button class="reset-btn" id="reset-btn">reset progress</button>
+  </div>
+
+</div>
+
+<script>
+const PHASES = [
+  {
+    id: 'p1',
+    title: 'Platform foundations',
+    when: 'before interview',
+    brief: 'Org structure, objects, and the security model — enough to speak fluently if this comes up in conversation.',
+    items: [
+      {id:'i1', title:'Salesforce Platform Basics trail', note:'Orgs, objects, fields, records — the core vocabulary.', hours:'~2h'},
+      {id:'i2', title:'Data model & relationships', note:'Lookup vs master-detail, junction objects, schema builder.', hours:'~1.5h'},
+      {id:'i3', title:'Security & sharing model', note:'Profiles, permission sets, org-wide defaults, sharing rules.', hours:'~2h'},
+    ],
+    links: [
+      {label:'Trailhead: Platform Basics', url:'https://trailhead.salesforce.com'},
+    ]
+  },
+  {
+    id: 'p2',
+    title: 'Automation & declarative tools',
+    when: 'before interview',
+    brief: 'Flow is the thing most likely to come up as a concrete example question.',
+    items: [
+      {id:'i4', title:'Flow Builder fundamentals', note:'Screen flows, record-triggered flows, basic logic.', hours:'~2h'},
+      {id:'i5', title:'When to use Flow vs Apex', note:'A framing you can articulate confidently without being a developer.', hours:'~30m'},
+    ],
+    links: [
+      {label:'Trailhead: Get Started with Automation', url:'https://trailhead.salesforce.com'},
+    ]
+  },
+  {
+    id: 'p3',
+    title: 'Integration architecture',
+    when: 'before interview — this is your strength',
+    brief: 'You already know these patterns from Azure and AWS. This is mostly re-labelling, not re-learning.',
+    items: [
+      {id:'i6', title:'REST & SOAP APIs on the platform', note:'How Salesforce exposes and consumes web services.', hours:'~1h'},
+      {id:'i7', title:'Platform Events & event-driven patterns', note:'The Salesforce equivalent of what you\u2019ve architected before.', hours:'~1h'},
+      {id:'i8', title:'External identity & SSO', note:'Maps closely to your Entra ID and IAM background.', hours:'~1h'},
+    ],
+    links: [
+      {label:'Trailhead: Integration Basics', url:'https://trailhead.salesforce.com'},
+    ]
+  },
+  {
+    id: 'p4',
+    title: 'Multi-cloud & governance',
+    when: 'before interview',
+    brief: 'How Sales Cloud, Service Cloud and Experience Cloud relate, and how architecture governance works on the platform.',
+    items: [
+      {id:'i9', title:'Sales, Service & Experience Cloud overview', note:'What each cloud is for, at a level you can discuss, not build.', hours:'~1h'},
+      {id:'i10', title:'Architecture governance on Salesforce', note:'Design reviews, quality gates, target-state roadmaps — your existing discipline, new context.', hours:'~1h'},
+    ],
+    links: []
+  },
+  {
+    id: 'p5',
+    title: 'Certification path',
+    when: 'ongoing, after interview',
+    brief: 'Not a sprint. Administrator first, then the architect track if the role progresses.',
+    items: [
+      {id:'i11', title:'Start Administrator (ADM-201) trail', note:'The foundation cert most paths assume.', hours:'ongoing'},
+      {id:'i12', title:'Save the Architect Journey trailmix', note:'Built specifically for the architect certification path — bookmark it now, work it over months.', hours:'ongoing'},
+      {id:'i13', title:'Book associate-level exam ($75)', note:'Cheapest concrete proof point once foundations feel solid.', hours:'ongoing'},
+    ],
+    links: [
+      {label:'Trailhead credentials directory', url:'https://trailhead.salesforce.com/credentials'},
+      {label:'Architect Journey trailmix', url:'https://trailhead.salesforce.com/users/strailhead/trailmixes/architect-trailmix-master'},
+    ]
+  },
+];
+
+let state = { checked: {}, notes: '', openPhase: 'p1' };
+
+function itemCount(){
+  let total = 0;
+  PHASES.forEach(p => total += p.items.length);
+  return total;
+}
+
+function checkedCount(){
+  return Object.values(state.checked).filter(Boolean).length;
+}
+
+function renderPhases(){
+  const container = document.getElementById('phases');
+  container.innerHTML = '';
+  PHASES.forEach((phase, idx) => {
+    const doneCount = phase.items.filter(it => state.checked[it.id]).length;
+    const pct = Math.round((doneCount / phase.items.length) * 100);
+    const isDone = doneCount === phase.items.length;
+    const isOpen = state.openPhase === phase.id;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'phase';
+
+    const numBadge = document.createElement('div');
+    numBadge.className = 'phase-num' + (isDone ? ' done' : '');
+    numBadge.textContent = isDone ? String.fromCharCode(10003) : (idx + 1);
+    wrap.appendChild(numBadge);
+
+    const card = document.createElement('div');
+    card.className = 'phase-card';
+
+    const head = document.createElement('div');
+    head.className = 'phase-head';
+    head.innerHTML = `
+      <div>
+        <p class="phase-title">${phase.title}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="phase-when">${phase.when}</span>
+        <span class="chev${isOpen ? ' open' : ''}">&#9656;</span>
+      </div>
+    `;
+    head.addEventListener('click', () => {
+      state.openPhase = isOpen ? null : phase.id;
+      renderPhases();
+    });
+    card.appendChild(head);
+
+    const barTrack = document.createElement('div');
+    barTrack.className = 'phase-bar-track';
+    const barFill = document.createElement('div');
+    barFill.className = 'phase-bar-fill';
+    barFill.style.width = pct + '%';
+    barTrack.appendChild(barFill);
+    card.appendChild(barTrack);
+
+    const body = document.createElement('div');
+    body.className = 'phase-body' + (isOpen ? ' open' : '');
+    const briefEl = document.createElement('p');
+    briefEl.className = 'phase-brief';
+    briefEl.textContent = phase.brief;
+    body.appendChild(briefEl);
+
+    phase.items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'item';
+      const isChecked = !!state.checked[item.id];
+      row.innerHTML = `
+        <input type="checkbox" id="cb-${item.id}" ${isChecked ? 'checked' : ''}>
+        <div class="item-text">
+          <p class="item-title${isChecked ? ' checked' : ''}">${item.title}</p>
+          <p class="item-note">${item.note}</p>
+          <p class="item-hours">${item.hours}</p>
+        </div>
+      `;
+      const cb = row.querySelector('input');
+      cb.addEventListener('change', () => {
+        state.checked[item.id] = cb.checked;
+        saveState();
+        renderPhases();
+        renderOverall();
+      });
+      body.appendChild(row);
+    });
+
+    if(phase.links.length){
+      const linksWrap = document.createElement('div');
+      linksWrap.className = 'links';
+      phase.links.forEach(l => {
+        const a = document.createElement('a');
+        a.href = l.url;
+        a.textContent = l.label + ' \u2197';
+        a.target = '_blank';
+        linksWrap.appendChild(a);
+      });
+      body.appendChild(linksWrap);
+    }
+
+    card.appendChild(body);
+    wrap.appendChild(card);
+    container.appendChild(wrap);
+  });
+}
+
+function renderOverall(){
+  const total = itemCount();
+  const done = checkedCount();
+  document.getElementById('overall-count').textContent = done + ' / ' + total + ' items';
+  const circumference = 138.2;
+  const offset = circumference - (done / total) * circumference;
+  document.getElementById('ring-fill').style.strokeDashoffset = offset;
+}
+
+async function saveState(){
+  const status = document.getElementById('save-status');
+  status.textContent = 'saving...';
+  try{
+    await window.storage.set('sf-readiness-progress', JSON.stringify(state), false);
+    status.textContent = 'saved locally';
+  }catch(e){
+    status.textContent = 'save failed';
+  }
+}
+
+async function loadState(){
+  try{
+    const result = await window.storage.get('sf-readiness-progress', false);
+    if(result && result.value){
+      const parsed = JSON.parse(result.value);
+      state.checked = parsed.checked || {};
+      state.notes = parsed.notes || '';
+      state.openPhase = parsed.openPhase || 'p1';
+    }
+  }catch(e){
+    // no existing data, start fresh
+  }
+  document.getElementById('notes').value = state.notes;
+  renderPhases();
+  renderOverall();
+}
+
+document.getElementById('notes').addEventListener('input', (e) => {
+  state.notes = e.target.value;
+  saveState();
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if(confirm('Clear all checked items and notes?')){
+    state = { checked: {}, notes: '', openPhase: 'p1' };
+    document.getElementById('notes').value = '';
+    saveState();
+    renderPhases();
+    renderOverall();
+  }
+});
+
+loadState();
+</script>
+
+</body>
+</html>
