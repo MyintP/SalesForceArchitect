@@ -643,24 +643,29 @@ const SHEETS = [
     title: 'Certification track',
     lede: 'Not a sprint — layer credentials as depth in each domain solidifies. Order matters more than speed.',
     items: [
-      {id:'c1', title:'Platform Administrator', note:'The foundation cert nearly every path assumes. (Formerly "Administrator ADM-201.")', url:'https://trailhead.salesforce.com/credentials/administrator'},
-      {id:'c2', title:'Platform App Builder', note:'Declarative build depth.', url:'https://trailhead.salesforce.com/credentials/platformappbuilder'},
-      {id:'c3', title:'Platform Developer I', note:'Enough Apex/LWC credibility to review code, not just design around it.', url:'https://trailhead.salesforce.com/credentials/platformdeveloperi'},
-      {id:'c4', title:'Platform Sharing and Visibility Architect', note:'Architect Journey domain cert. (Formerly "Sharing and Visibility Designer.")', url:'https://trailhead.salesforce.com/credentials/sharingandvisibilityarchitect'},
-      {id:'c5', title:'Platform Data Architect', note:'Architect Journey domain cert. (Formerly "Data Architecture and Management Designer.")', url:'https://trailhead.salesforce.com/en/credentials/dataarchitect'},
-      {id:'c6', title:'Platform Integration Architect', note:'Architect Journey domain cert. (Formerly "Integration Architecture Designer.")', url:'https://trailhead.salesforce.com/credentials/integrationarchitect'},
-      {id:'c7', title:'Platform Identity and Access Management Architect', note:'Architect Journey domain cert. (Formerly "Identity and Access Management Designer.")', url:'https://trailhead.salesforce.com/credentials/platformidentityandaccessmanagementarchitect'},
-      {id:'c8', title:'Platform Development Lifecycle and Deployment Architect', note:'Architect Journey domain cert. (Formerly "Development Lifecycle and Deployment Designer.")', url:'https://trailhead.salesforce.com/en/credentials/developmentlifecycledeploymentarchitect'},
-      {id:'c9a', title:'Application Architect', note:'Composite designation — requires Data Architect + Sharing and Visibility Architect.', url:'https://trailhead.salesforce.com/en/credentials/applicationarchitect'},
-      {id:'c9b', title:'System Architect', note:'Composite designation — requires Integration, Identity & Access Management, and Development Lifecycle & Deployment Architect.', url:'https://trailhead.salesforce.com/en/credentials/systemarchitect'},
-      {id:'c10', title:'Certified Technical Architect (CTA)', note:'The board-reviewed capstone, prerequisite: both System Architect and Application Architect — see below.', url:'https://trailhead.salesforce.com/credentials/technicalarchitect'},
+      {id:'c1', title:'Platform Administrator', note:'The foundation cert nearly every path assumes. (Formerly "Administrator ADM-201.")', tag:'4–6 wks', url:'https://trailhead.salesforce.com/credentials/administrator'},
+      {id:'c2', title:'Platform App Builder', note:'Declarative build depth.', tag:'3–4 wks', url:'https://trailhead.salesforce.com/credentials/platformappbuilder'},
+      {id:'c3', title:'Platform Developer I', note:'Enough Apex/LWC credibility to review code, not just design around it.', tag:'6–8 wks', url:'https://trailhead.salesforce.com/credentials/platformdeveloperi'},
+      {id:'c4', title:'Platform Sharing and Visibility Architect', note:'Architect Journey domain cert. (Formerly "Sharing and Visibility Designer.")', tag:'3–4 wks', url:'https://trailhead.salesforce.com/credentials/sharingandvisibilityarchitect'},
+      {id:'c5', title:'Platform Data Architect', note:'Architect Journey domain cert. (Formerly "Data Architecture and Management Designer.")', tag:'4–6 wks', url:'https://trailhead.salesforce.com/en/credentials/dataarchitect'},
+      {id:'c6', title:'Platform Integration Architect', note:'Architect Journey domain cert. (Formerly "Integration Architecture Designer.")', tag:'4–6 wks', url:'https://trailhead.salesforce.com/credentials/integrationarchitect'},
+      {id:'c7', title:'Platform Identity and Access Management Architect', note:'Architect Journey domain cert. (Formerly "Identity and Access Management Designer.")', tag:'3–5 wks', url:'https://trailhead.salesforce.com/credentials/platformidentityandaccessmanagementarchitect'},
+      {id:'c8', title:'Platform Development Lifecycle and Deployment Architect', note:'Architect Journey domain cert. (Formerly "Development Lifecycle and Deployment Designer.")', tag:'3–5 wks', url:'https://trailhead.salesforce.com/en/credentials/developmentlifecycledeploymentarchitect'},
+      {id:'c9a', title:'Application Architect', note:'Composite designation — requires Data Architect + Sharing and Visibility Architect.', tag:'no separate exam', url:'https://trailhead.salesforce.com/en/credentials/applicationarchitect'},
+      {id:'c9b', title:'System Architect', note:'Composite designation — requires Integration, Identity & Access Management, and Development Lifecycle & Deployment Architect.', tag:'no separate exam', url:'https://trailhead.salesforce.com/en/credentials/systemarchitect'},
+      {id:'c10', title:'Certified Technical Architect (CTA)', note:'The board-reviewed capstone, prerequisite: both System Architect and Application Architect — see below.', tag:'3–6 months', url:'https://trailhead.salesforce.com/credentials/technicalarchitect'},
     ],
     render(){
       return `${sheetHeader(this)}${sheetMeta('ongoing')}
         <div class="callout">
           <b>Naming note —</b> Salesforce renamed the domain "Designer" certifications to "Architect" in recent years (e.g. Sharing and Visibility Designer → Platform Sharing and Visibility Architect). Both names refer to the same exam lineage — verify current naming on Trailhead before booking, since Salesforce revises this periodically.
         </div>
+        <h2 class="section-h">Exam-prep timelines</h2>
+        <p class="body-text">Rule-of-thumb estimates, not official Salesforce figures — Salesforce doesn't publish study-time guidance, so these are community-typical ranges assuming roughly 5–10 hours/week of part-time study, starting from having worked through this workspace's matching domain sheet(s) first. Full-time study or deep prior product experience compresses these; a demanding day job stretches them. Treat the numbers as pacing input, not a deadline.</p>
         ${itemList(this)}
+        <div class="callout">
+          <b>Rough total, sequential and part-time —</b> the eight individually-examined certs (Administrator through Development Lifecycle & Deployment Architect) sum to roughly <b>30–44 weeks</b> (~7–10 months) back to back. Add CTA's own <b>3–6 months</b> of board-specific prep on top, and the realistic floor for reaching CTA-ready from zero, part-time, is around <b>10–16 months</b> — most candidates take longer, since few people study every domain back-to-back without a break or a parallel day job. Parallelizing certs in the same tier (e.g. studying two Architect Journey domains at once) is the main lever to compress this.
+        </div>
         <div class="callout amber">
           <b>Cheapest concrete proof point —</b> book the associate-level exam ($75) once foundations feel solid. It's the fastest way to convert study time into something a hiring panel can verify.
         </div>
