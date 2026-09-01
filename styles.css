@@ -314,6 +314,78 @@ ol.step-list li, ul.plain-list li{
 .mini-bar{height:4px;background:var(--canvas-border);width:100px;display:inline-block;margin-right:8px;position:relative;top:-1px;}
 .mini-bar-fill{height:100%;background:var(--accent);}
 
+/* ---- Scenario / Connected Case practice ---- */
+.scenario-card{
+  border:1px solid var(--canvas-border);
+  background:var(--canvas-panel);
+  padding:16px 18px;
+  margin-bottom:22px;
+}
+.scenario-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.06em;
+  color:var(--accent);
+  margin:0 0 4px;
+}
+.scenario-title{
+  font-family:'Spectral',serif;
+  font-size:17px;
+  font-weight:500;
+  margin:0 0 8px;
+  color:var(--canvas-ink);
+}
+.scenario-prompt{
+  background:#EDF3FB;
+  border-left:3px solid var(--accent);
+  padding:10px 12px;
+  font-size:13.5px;
+  line-height:1.55;
+  color:var(--canvas-ink);
+  margin:10px 0 12px;
+}
+.scenario-prompt b{color:var(--accent-dim);}
+
+details.reveal{
+  margin-top:14px;
+  border-top:1px dashed var(--canvas-border);
+  padding-top:12px;
+}
+details.reveal summary{
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.03em;
+  color:var(--accent);
+  list-style:none;
+  user-select:none;
+}
+details.reveal summary::-webkit-details-marker{display:none;}
+details.reveal summary::before{content:'▸ ';}
+details.reveal[open] summary::before{content:'▾ ';}
+details.reveal .reveal-body{padding-top:12px;}
+.rubric-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:0.04em;
+  color:var(--canvas-ink-muted);
+  text-transform:uppercase;
+  margin:14px 0 4px;
+}
+
+/* ---- Artefact studio ---- */
+pre.adr-template{
+  background:#1B2333;
+  color:#DCE3F0;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.6;
+  padding:16px 18px;
+  overflow-x:auto;
+  margin:0 0 16px;
+  white-space:pre-wrap;
+}
+
 /* ---- Study desk ---- */
 .study-desk{
   border-top:1px solid var(--shell-border);
