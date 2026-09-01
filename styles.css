@@ -373,6 +373,90 @@ details.reveal .reveal-body{padding-top:12px;}
   margin:14px 0 4px;
 }
 
+/* ---- Quiz bank ---- */
+.quiz-controls{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  background:var(--canvas-panel);
+  border:1px solid var(--canvas-border);
+  padding:12px 14px;
+  margin-bottom:20px;
+}
+.quiz-controls select{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:12.5px;
+  padding:6px 8px;
+  border:1px solid var(--canvas-border);
+  background:var(--canvas-bg);
+  color:var(--canvas-ink);
+}
+.quiz-score{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--canvas-ink-muted);
+}
+.quiz-score b{color:var(--canvas-ink);}
+.quiz-score-total{color:var(--canvas-ink-muted);}
+.quiz-reset-btn{
+  margin-left:auto;
+  background:none;
+  border:1px solid var(--canvas-border);
+  color:var(--canvas-ink-muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+.quiz-reset-btn:hover{border-color:var(--accent);color:var(--accent-dim);}
+
+.quiz-q{
+  border:1px solid var(--canvas-border);
+  padding:14px 16px;
+  margin-bottom:14px;
+}
+.quiz-domain-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.05em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin:0 0 6px;
+}
+.quiz-question-text{
+  font-size:14px;
+  font-weight:500;
+  color:var(--canvas-ink);
+  line-height:1.5;
+  margin:0 0 10px;
+}
+.quiz-choices{display:flex;flex-direction:column;gap:6px;}
+.quiz-choice{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--canvas-ink);
+  padding:6px 8px;
+  border:1px solid var(--canvas-border);
+  cursor:pointer;
+}
+.quiz-choice:hover{border-color:var(--accent);}
+.quiz-choice input{margin-top:3px;flex-shrink:0;}
+.quiz-choice.correct{border-color:var(--green);background:var(--green-soft);}
+.quiz-choice.incorrect{border-color:#C0392B;background:rgba(192,57,43,0.08);}
+.quiz-explain{
+  margin:12px 0 0;
+  padding:10px 12px;
+  font-size:12.5px;
+  line-height:1.55;
+  background:var(--canvas-panel);
+}
+.quiz-explain.right{border-left:3px solid var(--green);color:var(--canvas-ink);}
+.quiz-explain.wrong{border-left:3px solid #C0392B;color:var(--canvas-ink);}
+
 /* ---- Artefact studio ---- */
 pre.adr-template{
   background:#1B2333;

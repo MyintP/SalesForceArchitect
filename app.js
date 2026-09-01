@@ -20,6 +20,8 @@ function lsSet(key, value){
 
 let checked = lsGet(LS_CHECKED, {});
 let bookmarks = new Set(lsGet(LS_BOOKMARKS, []));
+let quizAnswers = lsGet('sfaw-quiz-answers', {});
+let quizFilter = 'all';
 
 function isChecked(id){ return !!checked[id]; }
 function toggleChecked(id, val){
@@ -45,6 +47,31 @@ function itemRow(id, title, note, tag){
 
 function kad(icon, title, desc){
   return `<div class="kad-card"><span class="k-icon">${icon}</span><b>${title}</b><span>${desc}</span></div>`;
+}
+
+function quizQuestionHtml(q, num){
+  const answered = quizAnswers[q.id];
+  const isAnswered = answered !== undefined;
+  const choicesHtml = q.choices.map((c, idx) => {
+    let cls = '';
+    if(isAnswered){
+      if(idx === q.correct) cls = ' correct';
+      else if(idx === answered) cls = ' incorrect';
+    }
+    return `<label class="quiz-choice${cls}">
+      <input type="radio" name="${q.id}" value="${idx}" data-qid="${q.id}" ${answered === idx ? 'checked' : ''} ${isAnswered ? 'disabled' : ''}>
+      <span>${c}</span>
+    </label>`;
+  }).join('');
+  const explainHtml = isAnswered
+    ? `<p class="quiz-explain${answered === q.correct ? ' right' : ' wrong'}">${answered === q.correct ? '✓ Correct — ' : '✗ Not quite — '}${q.explain}</p>`
+    : '';
+  return `<div class="quiz-q">
+    <p class="quiz-domain-tag">${DOMAIN_LABELS[q.domain]}</p>
+    <p class="quiz-question-text">${num}. ${q.q}</p>
+    <div class="quiz-choices">${choicesHtml}</div>
+    ${explainHtml}
+  </div>`;
 }
 
 function resourceItem(title, desc, url, label){
@@ -76,6 +103,74 @@ function scenario(num, title, setup, prompt, considerations, modelAnswer, rubric
     </div>
   `;
 }
+
+/* ---------------------------------------------------------------- */
+/* Quiz bank                                                        */
+/* ---------------------------------------------------------------- */
+
+const DOMAIN_LABELS = {
+  role: 'The Role', foundations: 'Platform Foundations', automation: 'Automation',
+  apex: 'Apex', lwc: 'Lightning Web Components', 'data-architecture': 'Data Architecture',
+  'sharing-visibility': 'Sharing & Visibility', integration: 'Integration',
+  iam: 'Identity & Access Mgmt', governance: 'Multi-Cloud & Governance',
+  'dev-lifecycle': 'Dev Lifecycle & Deployment', agentic: 'Agentic Enterprise',
+  certification: 'Certification Path',
+};
+
+const QUIZ_BANK = [
+  {id:'q-role-1', domain:'role', q:'Which architect tier is primarily responsible for cross-org, cross-cloud, cross-platform strategy?', choices:['Application Architect','System Architect','Enterprise / Technical Architect','Platform App Builder'], correct:2, explain:'Application Architect stays inside one org (data, sharing, UI); System Architect covers integration and identity across systems; Enterprise/Technical Architect — the tier CTA sits at — owns cross-org, cross-cloud, cross-platform strategy.'},
+  {id:'q-role-2', domain:'role', q:'A stakeholder asks for a feature buildable with either a validation rule or a trigger. What should you evaluate first?', choices:['Whichever the developer prefers','Whether declarative tools can satisfy the requirement cleanly','Whether Apex looks better in documentation','Whether it can be built fastest regardless of tool'], correct:1, explain:'Default to declarative; only escalate to code when the requirement genuinely needs something declarative tools can’t express cleanly.'},
+  {id:'q-role-3', domain:'role', q:'What is the primary skill a CTA review board is actually scoring?', choices:['Memorised governor limits','Typing speed in Apex','Trade-off judgement under ambiguity, defended live','Familiarity with every AppExchange package'], correct:2, explain:'The board hands you an ambiguous scenario and watches how you reason and defend a design under cross-examination — not whether you recite facts.'},
+
+  {id:'q-fnd-1', domain:'foundations', q:'Which relationship type causes the child record to inherit the parent’s security and be deleted along with the parent?', choices:['Lookup','Master-detail','Many-to-many junction on lookups','Hierarchical'], correct:1, explain:'Master-detail is the tight relationship: security and lifecycle both cascade from parent to child, and it’s also what powers roll-up summary fields.'},
+  {id:'q-fnd-2', domain:'foundations', q:'What is the most restrictive Organization-Wide Default setting for a standard object?', choices:['Public Read/Write','Public Read Only','Private','Controlled by Parent'], correct:2, explain:'Private grants access only to the owner (and up the role hierarchy) by default — the tightest starting posture.'},
+  {id:'q-fnd-3', domain:'foundations', q:'Which security layer controls whether a user can see one specific field, independent of object access?', choices:['Organization-Wide Defaults','Field-Level Security','Sharing rules','Role hierarchy'], correct:1, explain:'Field-Level Security (via profiles/permission sets) is layered independently on top of object- and record-level security.'},
+  {id:'q-fnd-4', domain:'foundations', q:'How do you model a many-to-many relationship between two objects?', choices:['A single lookup field','A junction object with two master-detail relationships','A formula field','A role hierarchy branch'], correct:1, explain:'A junction object — two master-detail relationships, one to each side — is the standard many-to-many pattern.'},
+
+  {id:'q-auto-1', domain:'automation', q:'Which Flow type is designed for guided, multi-step user input?', choices:['Scheduled Flow','Screen Flow','Autolaunched Flow','Record-Triggered Flow'], correct:1, explain:'Screen Flows walk a user through a wizard-style sequence of input screens.'},
+  {id:'q-auto-2', domain:'automation', q:'A before-save record-triggered flow can do which of the following?', choices:['Send an outbound email','Create a related record','Update a field on the triggering record with no extra DML','Call an external REST API'], correct:2, explain:'Before-save flows update the triggering record’s own fields in-memory, before the save — no extra DML, and fast. Related-record creation, callouts, and emails need after-save (or Apex/async).'},
+  {id:'q-auto-3', domain:'automation', q:'What is the actual decision rule for choosing Apex over Flow?', choices:['Apex is always more "senior" so prefer it','Only when Flow genuinely can’t express the logic cleanly (complex recursion, sync callouts, unmanageable branching)','Whenever the requirement mentions an object','Whenever there is more than one screen involved'], correct:1, explain:'Default to Flow; escalate to Apex only when there’s a concrete, nameable reason Flow can’t cleanly do the job.'},
+
+  {id:'q-apex-1', domain:'apex', q:'What is the maximum number of SOQL queries allowed in a single synchronous Apex transaction?', choices:['50','100','150','200'], correct:1, explain:'100 SOQL queries synchronous (200 async) — one of the limits that shapes bulkification discipline.'},
+  {id:'q-apex-2', domain:'apex', q:'What is the maximum number of DML statements allowed in a single Apex transaction?', choices:['100','150','200','50'], correct:1, explain:'150 DML statements per transaction — regardless of sync or async context.'},
+  {id:'q-apex-3', domain:'apex', q:'What is the single most common root cause of governor-limit exceptions in Apex?', choices:['Using too many custom objects','A SOQL query or DML statement placed inside a loop','Using Lightning Web Components','Long variable names'], correct:1, explain:'Querying or writing once per record in a loop burns through the per-transaction limits at exactly the point bulk operations (data loads, API batches) send 200 records at once.'},
+  {id:'q-apex-4', domain:'apex', q:'Which async Apex tool is chainable, trackable by Id, and takes typed parameters?', choices:['@future method','Queueable Apex','Batch Apex','Scheduled Apex'], correct:1, explain:'Queueable Apex supports chaining (one job enqueues the next), typed constructor parameters, and job-Id tracking — @future supports none of these.'},
+  {id:'q-apex-5', domain:'apex', q:'Which tool is purpose-built for processing millions of records in scoped chunks?', choices:['@future method','Queueable Apex','Batch Apex','A record-triggered Flow'], correct:2, explain:'Batch Apex’s start/execute/finish model is designed exactly for large-volume, chunked processing.'},
+
+  {id:'q-lwc-1', domain:'lwc', q:'Which decorator marks a property public so a parent component can pass data down to a child?', choices:['@track','@api','@wire','@public'], correct:1, explain:'@api exposes a property or method publicly for parent-to-child (or method-call) access.'},
+  {id:'q-lwc-2', domain:'lwc', q:'Which decorator reactively binds a component property to an Apex method or platform data source?', choices:['@api','@track','@wire','@reactive'], correct:2, explain:'@wire binds to a reactive data source; the component re-renders automatically when the underlying data changes.'},
+  {id:'q-lwc-3', domain:'lwc', q:'For simple record CRUD, which approach gives you client-side caching for free?', choices:['A custom Apex controller called imperatively','Lightning Data Service (via getRecord/updateRecord)','A Visualforce remoting call','A scheduled Flow'], correct:1, explain:'Lightning Data Service caches records client-side and shares that cache across components — a custom Apex round-trip throws that away.'},
+  {id:'q-lwc-4', domain:'lwc', q:'Since Spring ‘20, is @track required for a component to re-render when a simple property is reassigned?', choices:['Yes, always required', 'No — simple field reassignment is reactive automatically', 'Only for arrays', 'Only inside Aura components'], correct:1, explain:'The framework tracks simple reassignment automatically now; @track is only relevant for deeper mutation tracking on objects/arrays.'},
+
+  {id:'q-data-1', domain:'data-architecture', q:'What is a "skinny table" in a Salesforce data-architecture context?', choices:['A custom object with fewer fields','A Salesforce-managed denormalised copy of select fields, used to speed up wide queries','A Big Object variant','A sandbox with reduced data'], correct:1, explain:'Skinny tables are requested through Salesforce support and used when standard indexing isn’t enough for queries joining across many fields.'},
+  {id:'q-data-2', domain:'data-architecture', q:'What is a Big Object best suited for?', choices:['Frequently updated transactional records','Billions of immutable, audit/history-style records queried by a known key','Real-time dashboards','Small reference/lookup data'], correct:1, explain:'Big Objects trade ad hoc query flexibility for massive scale on immutable, key-based data.'},
+  {id:'q-data-3', domain:'data-architecture', q:'What makes a SOQL query "selective"?', choices:['It uses a SELECT *','It can use an index to avoid scanning the full table','It returns fewer than 10 fields','It filters on a formula field'], correct:1, explain:'Selectivity is about whether the query planner can use an index — not about field count or syntax style.'},
+
+  {id:'q-sv-1', domain:'sharing-visibility', q:'What should you always name first when describing a sharing/visibility design?', choices:['The sharing rule that grants the most access','The Organization-Wide Default','The role hierarchy depth','The Apex managed sharing reason'], correct:1, explain:'OWD is the ceiling everything else widens from — stating it first is the review-board tell of a strong answer.'},
+  {id:'q-sv-2', domain:'sharing-visibility', q:'Which mechanism should be the last resort for visibility logic, reached for only when a criteria-based rule can’t express it?', choices:['Role hierarchy','Owner-based sharing rule','Apex managed sharing','Public Read Only OWD'], correct:2, explain:'Apex managed sharing is the most powerful and the hardest to review/maintain — reach for it last, not first.'},
+  {id:'q-sv-3', domain:'sharing-visibility', q:'Which mechanism grants access automatically up a management chain?', choices:['Sharing rule','Role hierarchy','Manual sharing','Restriction rule'], correct:1, explain:'Role hierarchy is the free, coarse mechanism for "my manager can see my records" — it doesn’t fit every requirement.'},
+
+  {id:'q-int-1', domain:'integration', q:'What does a Named Credential do?', choices:['Stores a user’s Salesforce password','Bundles an external endpoint and its authentication so Apex never handles raw tokens','Defines an Apex trigger’s execution order','Configures a sandbox refresh schedule'], correct:1, explain:'Named Credentials keep endpoint URLs and auth details out of Apex code, managed centrally instead.'},
+  {id:'q-int-2', domain:'integration', q:'Why do Platform Events decouple integration compared to a direct REST callout?', choices:['They are faster per-call','A publisher fires an event and moves on; subscribers process independently without blocking the publisher','They don’t count against any limits','They replace the need for authentication'], correct:1, explain:'The publish/subscribe model means a slow or failing subscriber doesn’t block the publisher’s transaction — unlike a synchronous callout.'},
+  {id:'q-int-3', domain:'integration', q:'Which API is purpose-built for moving millions of records rather than one record at a time?', choices:['Standard REST API','Bulk API','Streaming API','Metadata API'], correct:1, explain:'Bulk API is async and chunked, designed for large-volume data movement; standard REST API is built for per-record traffic.'},
+
+  {id:'q-iam-1', domain:'iam', q:'Which OAuth flow fits a server-to-server integration with no human present?', choices:['Web Server Flow','JWT Bearer Flow','Device Flow','Username-Password Flow (legacy)'], correct:1, explain:'JWT Bearer Flow uses a pre-registered certificate to prove identity without any user interaction — the standard fit for scheduled, unattended integrations.'},
+  {id:'q-iam-2', domain:'iam', q:'What does Just-in-Time (JIT) provisioning do?', choices:['Pre-creates every possible user account overnight','Auto-creates or updates the Salesforce user record on first federated login','Grants temporary admin access for support tickets','Provisions a new sandbox on demand'], correct:1, explain:'JIT provisioning means accounts don’t need to be pre-created by an admin — the IdP-asserted attributes create/update the user at login time.'},
+  {id:'q-iam-3', domain:'iam', q:'What does a Connected App primarily define?', choices:['A user’s MFA method','The callback URL, OAuth scopes, and (for JWT) trusted certificate for an external system','The org’s sandbox refresh cadence','A sharing rule template'], correct:1, explain:'A Connected App is the registration record that governs how an external system authenticates against and is scoped within the org.'},
+
+  {id:'q-gov-1', domain:'governance', q:'Which objects most commonly cause governance disputes when Sales, Service, and Experience Cloud share one org?', choices:['Campaign and Lead','Account and Contact','Report and Dashboard','Profile and Permission Set'], correct:1, explain:'Account and Contact sit under all three clouds, so competing automation/ownership claims collide there first.'},
+  {id:'q-gov-2', domain:'governance', q:'What artefact is recommended for recording who owns a shared object and why?', choices:['A page layout','An Architecture Decision Record (ADR)','A permission set','A validation rule'], correct:1, explain:'An ADR captures the decision, the alternatives considered, and the condition that would invalidate it — exactly what a cross-team ownership dispute needs on record.'},
+
+  {id:'q-dl-1', domain:'dev-lifecycle', q:'Which sandbox type includes a full copy of production data and refreshes roughly every 29 days?', choices:['Developer','Developer Pro','Partial Copy','Full'], correct:3, explain:'Full sandboxes mirror production data and metadata; the long refresh cycle makes them fit for staging/UAT, not daily development.'},
+  {id:'q-dl-2', domain:'dev-lifecycle', q:'In source-driven development, what is the source of truth?', choices:['The production org','Version-controlled metadata (e.g. via Salesforce CLI)','A change set','The most recently refreshed sandbox'], correct:1, explain:'The modern model inverts the older org-as-source-of-truth pattern: Git holds the source of truth, and orgs become disposable deployment targets.'},
+  {id:'q-dl-3', domain:'dev-lifecycle', q:'Which sandbox type is best suited to daily individual development and unit testing?', choices:['Full','Partial Copy','Developer / Developer Pro','Production itself'], correct:2, explain:'Developer/Developer Pro sandboxes are metadata-only and refresh quickly, matching a fast individual build-and-test loop.'},
+
+  {id:'q-ag-1', domain:'agentic', q:'What permission scope does an Agentforce agent typically operate under?', choices:['A special super-admin scope reserved for agents','The permissions of the running user it acts on behalf of','Unrestricted access to all org data','Whatever scope is hardcoded in the agent prompt'], correct:1, explain:'Agents call the same declarative/programmatic building blocks as any other automation and inherit the running user’s permissions — the existing sharing model still applies.'},
+  {id:'q-ag-2', domain:'agentic', q:'Beyond scope and data grounding, what is the third key design question for an agent action?', choices:['What font the agent’s UI uses','Escalation — when the agent hands off to a human','How many Trailhead badges it has earned','Which Sandbox it was built in'], correct:1, explain:'Knowing when an agent should stop and hand off to a human is as much a design decision as what it’s allowed to touch.'},
+
+  {id:'q-cert-1', domain:'certification', q:'What distinguishes the Certified Technical Architect (CTA) exam from other Salesforce certifications?', choices:['It’s entirely multiple-choice','It’s a live review board: a hands-on design exercise followed by a panel presentation and cross-examination','It has no prerequisites at all','It can be completed anonymously online with no interaction'], correct:1, explain:'CTA is scored across multiple domains at once by a panel that actively probes your design’s trade-offs — technically correct but poorly defended still fails.'},
+  {id:'q-cert-2', domain:'certification', q:'Which certification does nearly every architect path assume as the foundation?', choices:['Certified Technical Architect','Administrator (ADM-201)','Platform Developer II','Identity and Access Management Designer'], correct:1, explain:'Administrator is the near-universal starting credential every later path builds from.'},
+];
 
 /* ---------------------------------------------------------------- */
 /* Sheet definitions                                                */
@@ -456,8 +551,30 @@ const SHEETS = [
     }
   },
   {
-    id: 'artefacts', group: 'Practice', navLabel: 'Architecture Artefact Studio',
+    id: 'quiz', group: 'Practice', navLabel: 'Quiz Bank',
     eyebrow: '14 · Practice',
+    title: 'Quiz bank',
+    lede: 'Certification-style multiple choice, scored immediately. Filter by domain, or run the whole bank. Answers persist — come back and pick up where you left off.',
+    items: [],
+    render(){
+      const filtered = quizFilter === 'all' ? QUIZ_BANK : QUIZ_BANK.filter(q => q.domain === quizFilter);
+      const attempted = filtered.filter(q => quizAnswers[q.id] !== undefined);
+      const correctCount = attempted.filter(q => quizAnswers[q.id] === q.correct).length;
+      const domainOptions = ['all', ...Object.keys(DOMAIN_LABELS)];
+      const controls = `<div class="quiz-controls">
+          <select id="quiz-filter">
+            ${domainOptions.map(d => `<option value="${d}"${d === quizFilter ? ' selected' : ''}>${d === 'all' ? 'All domains' : DOMAIN_LABELS[d]}</option>`).join('')}
+          </select>
+          <span class="quiz-score">Score: <b>${correctCount} / ${attempted.length}</b> attempted <span class="quiz-score-total">&middot; ${filtered.length} in view</span></span>
+          <button class="quiz-reset-btn" id="quiz-reset" type="button">Reset answers</button>
+        </div>`;
+      const questions = filtered.map((q, i) => quizQuestionHtml(q, i + 1)).join('');
+      return `${sheetHeader(this)}${sheetMeta(`${QUIZ_BANK.length} questions across ${Object.keys(DOMAIN_LABELS).length} domains`)}${controls}${questions}`;
+    }
+  },
+  {
+    id: 'artefacts', group: 'Practice', navLabel: 'Architecture Artefact Studio',
+    eyebrow: '15 · Practice',
     title: 'Architecture artefact studio',
     lede: 'Job descriptions ask for "architecture artefacts — solution diagrams, integration documentation, design decision records." That’s existing TOGAF/enterprise-architecture muscle; this sheet is the Salesforce-shaped rep.',
     items: [
@@ -485,7 +602,7 @@ const SHEETS = [
   },
   {
     id: 'certification', group: 'Certification', navLabel: 'Certification Track',
-    eyebrow: '15 · Certification',
+    eyebrow: '16 · Certification',
     title: 'Certification track',
     lede: 'Not a sprint — layer credentials as depth in each domain solidifies. Order matters more than speed.',
     items: [
@@ -511,7 +628,7 @@ const SHEETS = [
   },
   {
     id: 'bridge', group: 'Interview Bridge', navLabel: 'Readiness Bridge',
-    eyebrow: '16 · Interview Bridge',
+    eyebrow: '17 · Interview Bridge',
     title: 'What already transfers',
     lede: 'Translation notes for walking into a Salesforce Solution Architect conversation on the strength of existing enterprise architecture experience — lead with this.',
     items: [
@@ -530,7 +647,7 @@ const SHEETS = [
   },
   {
     id: 'resources', group: 'Reference', navLabel: 'Resources',
-    eyebrow: '17 · Reference',
+    eyebrow: '18 · Reference',
     title: 'Reference resources',
     lede: 'The primary sources this workspace is built from, plus ongoing references worth bookmarking.',
     items: [],
@@ -546,7 +663,7 @@ const SHEETS = [
   },
   {
     id: 'progress', group: 'Progress', navLabel: 'Progress & Review Queue',
-    eyebrow: '18 · Progress',
+    eyebrow: '19 · Progress',
     title: 'Progress & review queue',
     lede: 'Completion across every sheet, plus anything you’ve bookmarked or left half-finished.',
     items: [],
@@ -676,6 +793,29 @@ function renderSheet(){
       renderSidebar(sheet.id);
     });
   });
+
+  if(sheet.id === 'quiz'){
+    document.getElementById('canvas').querySelectorAll('input[type=radio][data-qid]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        quizAnswers[radio.getAttribute('data-qid')] = Number(radio.value);
+        lsSet('sfaw-quiz-answers', quizAnswers);
+        renderSheet();
+      });
+    });
+    const filterSelect = document.getElementById('quiz-filter');
+    if(filterSelect) filterSelect.addEventListener('change', (e) => {
+      quizFilter = e.target.value;
+      renderSheet();
+    });
+    const resetBtn = document.getElementById('quiz-reset');
+    if(resetBtn) resetBtn.addEventListener('click', () => {
+      if(confirm('Clear all quiz answers?')){
+        quizAnswers = {};
+        lsSet('sfaw-quiz-answers', quizAnswers);
+        renderSheet();
+      }
+    });
+  }
 
   const bookmarkBtn = document.getElementById('bookmark-btn');
   bookmarkBtn.classList.toggle('active', bookmarks.has(sheet.id));
