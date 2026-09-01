@@ -33,13 +33,13 @@ function toggleChecked(id, val){
 /* Content helpers                                                  */
 /* ---------------------------------------------------------------- */
 
-function itemRow(id, title, note, tag){
+function itemRow(id, title, note, tag, url){
   const c = isChecked(id);
   return `<div class="item-row">
     <input type="checkbox" id="cb-${id}" data-item="${id}" ${c ? 'checked' : ''}>
     <div class="item-text">
       <p class="item-title${c ? ' checked' : ''}">${title}</p>
-      <p class="item-note">${note}</p>
+      <p class="item-note">${note}${url ? ` — <a href="${url}" target="_blank" rel="noopener" class="item-link">Trailhead page &#8599;</a>` : ''}</p>
     </div>
     ${tag ? `<span class="item-tag">${tag}</span>` : ''}
   </div>`;
@@ -218,6 +218,13 @@ const SHEETS = [
           ${kad('🏅', 'Certify', 'Layer credentials — Administrator through Certified Technical Architect — as each domain solidifies.')}
         </div>
         ${quizSummaryTile()}
+        <h2 class="section-h">How this site and Trailhead work together</h2>
+        <p class="body-text">This workspace does not replace <a href="https://trailhead.salesforce.com/today" target="_blank" rel="noopener">Trailhead</a> — it can't. Trailhead is the system of record: it issues the badges, holds the points and rank, hosts the hands-on orgs, and is where every certification is actually booked and sat. Nothing here duplicates that.</p>
+        <table class="division-table">
+          <tr><td><b>Trailhead does</b></td><td>Hands-on modules, badges, points/rank, trailmixes, official exam guides, exam registration and delivery.</td></tr>
+          <tr><td><b>This site does</b></td><td>The synthesis layer Trailhead doesn't: one page per domain explaining the "so what," a scored quiz bank, decide-then-reveal scenario practice, an artefact-writing studio, and a single tracker across all of it.</td></tr>
+        </table>
+        <p class="body-text">Practically: read a sheet here first for the shape of the domain, do the linked Trailhead module for the hands-on depth and the badge, then come back and prove it stuck in the Quiz Bank or a Connected Case scenario. Certification Track items link straight to each credential's official Trailhead page — book and sit every exam there.</p>
         <h2 class="section-h">How to use this workspace</h2>
         <ol class="step-list">
           <li>Work the left-hand map top to bottom — each sheet builds on the last.</li>
@@ -633,19 +640,24 @@ const SHEETS = [
     title: 'Certification track',
     lede: 'Not a sprint — layer credentials as depth in each domain solidifies. Order matters more than speed.',
     items: [
-      {id:'c1', title:'Administrator (ADM-201)', note:'The foundation cert nearly every path assumes.'},
-      {id:'c2', title:'Platform App Builder', note:'Declarative build depth.'},
-      {id:'c3', title:'Platform Developer I', note:'Enough Apex/LWC credibility to review code, not just design around it.'},
-      {id:'c4', title:'Sharing and Visibility Designer', note:'Architect Journey domain cert.'},
-      {id:'c5', title:'Data Architecture and Management Designer', note:'Architect Journey domain cert.'},
-      {id:'c6', title:'Integration Architecture Designer', note:'Architect Journey domain cert.'},
-      {id:'c7', title:'Identity and Access Management Designer', note:'Architect Journey domain cert.'},
-      {id:'c8', title:'Development Lifecycle and Deployment Designer', note:'Architect Journey domain cert.'},
-      {id:'c9', title:'Application Architect / System Architect', note:'Composite designations once the underlying domain certs are held.'},
-      {id:'c10', title:'Certified Technical Architect (CTA)', note:'The board-reviewed capstone — see below.'},
+      {id:'c1', title:'Platform Administrator', note:'The foundation cert nearly every path assumes. (Formerly "Administrator ADM-201.")', url:'https://trailhead.salesforce.com/credentials/administrator'},
+      {id:'c2', title:'Platform App Builder', note:'Declarative build depth.', url:'https://trailhead.salesforce.com/credentials/platformappbuilder'},
+      {id:'c3', title:'Platform Developer I', note:'Enough Apex/LWC credibility to review code, not just design around it.', url:'https://trailhead.salesforce.com/credentials/platformdeveloperi'},
+      {id:'c4', title:'Platform Sharing and Visibility Architect', note:'Architect Journey domain cert. (Formerly "Sharing and Visibility Designer.")', url:'https://trailhead.salesforce.com/credentials/sharingandvisibilityarchitect'},
+      {id:'c5', title:'Platform Data Architect', note:'Architect Journey domain cert. (Formerly "Data Architecture and Management Designer.")', url:'https://trailhead.salesforce.com/en/credentials/dataarchitect'},
+      {id:'c6', title:'Platform Integration Architect', note:'Architect Journey domain cert. (Formerly "Integration Architecture Designer.")', url:'https://trailhead.salesforce.com/credentials/integrationarchitect'},
+      {id:'c7', title:'Platform Identity and Access Management Architect', note:'Architect Journey domain cert. (Formerly "Identity and Access Management Designer.")', url:'https://trailhead.salesforce.com/credentials/platformidentityandaccessmanagementarchitect'},
+      {id:'c8', title:'Platform Development Lifecycle and Deployment Architect', note:'Architect Journey domain cert. (Formerly "Development Lifecycle and Deployment Designer.")', url:'https://trailhead.salesforce.com/en/credentials/developmentlifecycledeploymentarchitect'},
+      {id:'c9a', title:'Application Architect', note:'Composite designation — requires Data Architect + Sharing and Visibility Architect.', url:'https://trailhead.salesforce.com/en/credentials/applicationarchitect'},
+      {id:'c9b', title:'System Architect', note:'Composite designation — requires Integration, Identity & Access Management, and Development Lifecycle & Deployment Architect.', url:'https://trailhead.salesforce.com/en/credentials/systemarchitect'},
+      {id:'c10', title:'Certified Technical Architect (CTA)', note:'The board-reviewed capstone, prerequisite: both System Architect and Application Architect — see below.', url:'https://trailhead.salesforce.com/credentials/technicalarchitect'},
     ],
     render(){
-      return `${sheetHeader(this)}${sheetMeta('ongoing')}${itemList(this)}
+      return `${sheetHeader(this)}${sheetMeta('ongoing')}
+        <div class="callout">
+          <b>Naming note —</b> Salesforce renamed the domain "Designer" certifications to "Architect" in recent years (e.g. Sharing and Visibility Designer → Platform Sharing and Visibility Architect). Both names refer to the same exam lineage — verify current naming on Trailhead before booking, since Salesforce revises this periodically.
+        </div>
+        ${itemList(this)}
         <div class="callout amber">
           <b>Cheapest concrete proof point —</b> book the associate-level exam ($75) once foundations feel solid. It's the fastest way to convert study time into something a hiring panel can verify.
         </div>
@@ -717,6 +729,7 @@ const SHEETS = [
         return `<li><a href="#${s.id}">${star}${s.navLabel}</a></li>`;
       }).join('')}</ul>` : `<p class="body-text">Nothing queued — bookmark a sheet or leave an item unchecked and it'll show up here.</p>`;
 
+      const thp = lsGet('sfaw-trailhead-profile', {url:'', points:'', rank:'', badges:''});
       return `${sheetHeader(this)}
         <div class="progress-summary">
           <svg class="progress-ring" viewBox="0 0 56 56">
@@ -729,6 +742,17 @@ const SHEETS = [
             <p class="p-label">Overall progress</p>
             <p class="p-count">${done} / ${total} items &middot; ${pct}%</p>
           </div>
+        </div>
+        <h2 class="section-h">Your Trailhead profile</h2>
+        <p class="body-text">Points, rank, and badges live on Trailhead — this workspace can't read them (Trailhead has no public API for that). Log them here yourself after a study session so both systems stay in one view.</p>
+        <div class="th-profile-card">
+          <div class="th-profile-grid">
+            <label>Trailblazer profile URL<input type="text" id="th-url" data-thf="url" value="${thp.url}" placeholder="https://trailhead.salesforce.com/id/..."></label>
+            <label>Points<input type="text" id="th-points" data-thf="points" value="${thp.points}" placeholder="e.g. 42,300"></label>
+            <label>Rank<input type="text" id="th-rank" data-thf="rank" value="${thp.rank}" placeholder="e.g. Ranger"></label>
+            <label>Badges earned<input type="text" id="th-badges" data-thf="badges" value="${thp.badges}" placeholder="e.g. 65"></label>
+          </div>
+          ${thp.url ? `<a href="${thp.url}" target="_blank" rel="noopener" class="th-profile-link">Open your Trailhead profile &#8599;</a>` : ''}
         </div>
         <h2 class="section-h">By sheet</h2>
         <table class="sheet-progress-table"><tbody>${rows}</tbody></table>
@@ -753,7 +777,7 @@ function sheetMeta(text){
   return `<div class="sheet-meta"><span>${text}</span></div>`;
 }
 function itemList(sheet){
-  return sheet.items.map(it => itemRow(it.id, it.title, it.note, it.tag)).join('');
+  return sheet.items.map(it => itemRow(it.id, it.title, it.note, it.tag, it.url)).join('');
 }
 
 /* ---------------------------------------------------------------- */
@@ -820,6 +844,17 @@ function renderSheet(){
       renderSidebar(sheet.id);
     });
   });
+
+  if(sheet.id === 'progress'){
+    document.getElementById('canvas').querySelectorAll('input[data-thf]').forEach(input => {
+      input.addEventListener('change', () => {
+        const thp = lsGet('sfaw-trailhead-profile', {url:'', points:'', rank:'', badges:''});
+        thp[input.getAttribute('data-thf')] = input.value.trim();
+        lsSet('sfaw-trailhead-profile', thp);
+        renderSheet();
+      });
+    });
+  }
 
   if(sheet.id === 'quiz'){
     document.getElementById('canvas').querySelectorAll('input[type=radio][data-qid]').forEach(radio => {
