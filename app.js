@@ -802,6 +802,8 @@ function sheetDotClass(sheet){
   return ' partial';
 }
 
+let collapsedGroups = new Set(lsGet('sfaw-collapsed-groups', []));
+
 function renderSidebar(currentId){
   const groups = [];
   SHEETS.forEach(s => {
@@ -810,23 +812,39 @@ function renderSidebar(currentId){
     g.sheets.push(s);
   });
   const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = groups.map(g => `
-    <div class="nav-group">
-      <p class="nav-group-label">${g.name}</p>
-      ${g.sheets.map(s => `
-        <div class="nav-item${s.id === currentId ? ' current' : ''}${bookmarks.has(s.id) ? ' bookmarked' : ''}" data-sheet="${s.id}">
-          <span class="nav-dot${sheetDotClass(s)}"></span>
-          <span>${s.navLabel}</span>
-          <span class="nav-star">${bookmarks.has(s.id) ? '★' : ''}</span>
-        </div>
-      `).join('')}
+  sidebar.innerHTML = groups.map(g => {
+    const containsCurrent = g.sheets.some(s => s.id === currentId);
+    const isCollapsed = collapsedGroups.has(g.name) && !containsCurrent;
+    return `
+    <div class="nav-group${isCollapsed ? ' collapsed' : ''}" data-group="${g.name}">
+      <p class="nav-group-label"><span class="nav-group-chevron">&#9662;</span>${g.name}</p>
+      <div class="nav-group-items">
+        ${g.sheets.map(s => `
+          <div class="nav-item${s.id === currentId ? ' current' : ''}${bookmarks.has(s.id) ? ' bookmarked' : ''}" data-sheet="${s.id}">
+            <span class="nav-dot${sheetDotClass(s)}"></span>
+            <span>${s.navLabel}</span>
+            <span class="nav-star">${bookmarks.has(s.id) ? '★' : ''}</span>
+          </div>
+        `).join('')}
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   sidebar.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('click', () => {
       location.hash = el.getAttribute('data-sheet');
       if(window.innerWidth <= 860) document.getElementById('sidebar').classList.remove('open');
+    });
+  });
+
+  sidebar.querySelectorAll('.nav-group-label').forEach(el => {
+    el.addEventListener('click', () => {
+      const groupName = el.parentElement.getAttribute('data-group');
+      if(collapsedGroups.has(groupName)) collapsedGroups.delete(groupName);
+      else collapsedGroups.add(groupName);
+      lsSet('sfaw-collapsed-groups', Array.from(collapsedGroups));
+      renderSidebar(currentId);
     });
   });
 }
