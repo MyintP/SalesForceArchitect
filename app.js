@@ -140,7 +140,7 @@ const DOMAIN_LABELS = {
   'sharing-visibility': 'Sharing & Visibility', integration: 'Integration',
   iam: 'Identity & Access Mgmt', governance: 'Multi-Cloud & Governance',
   'dev-lifecycle': 'Dev Lifecycle & Deployment', agentic: 'Agentic Enterprise',
-  certification: 'Certification Path',
+  certification: 'Certification Path', presales: 'Pre-Sales & Solution Engineering',
 };
 
 const QUIZ_BANK = [
@@ -196,6 +196,13 @@ const QUIZ_BANK = [
 
   {id:'q-cert-1', domain:'certification', q:'What distinguishes the Certified Technical Architect (CTA) exam from other Salesforce certifications?', choices:['It’s entirely multiple-choice','It’s a live review board: a hands-on design exercise followed by a panel presentation and cross-examination','It has no prerequisites at all','It can be completed anonymously online with no interaction'], correct:1, explain:'CTA is scored across multiple domains at once by a panel that actively probes your design’s trade-offs — technically correct but poorly defended still fails.'},
   {id:'q-cert-2', domain:'certification', q:'Which certification does nearly every architect path assume as the foundation?', choices:['Certified Technical Architect','Administrator (ADM-201)','Platform Developer II','Identity and Access Management Designer'], correct:1, explain:'Administrator is the near-universal starting credential every later path builds from.'},
+  {id:'q-ps-1', domain:'presales', q:'In an enterprise deal, who typically owns the "technical win"?', choices:['The account executive','The Solution Engineer','The customer success manager','The implementation partner'], correct:1, explain:'The account executive owns the commercial close; the Solution Engineer owns the point where the buyer’s technical evaluators agree the solution fits.'},
+  {id:'q-ps-2', domain:'presales', q:'Which MEDDPICC element does the Solution Engineer most directly own?', choices:['Paper Process','Economic Buyer','Decision Criteria','Competition pricing'], correct:2, explain:'Decision Criteria are the technical requirements the buyer will score you against. The SE should get them written down and, ideally, influence them. Economic Buyer and Paper Process usually sit with the account executive.'},
+  {id:'q-ps-3', domain:'presales', q:'What is SPIN Selling?', choices:['A budget, authority, need and timeline scorecard','A questioning sequence: Situation, Problem, Implication, Need-payoff','A demo storyboard format','A proof-of-concept contract template'], correct:1, explain:'SPIN is a questioning technique rather than a qualification scorecard. Its Implication and Need-payoff questions get the buyer to state the cost of the problem themselves.'},
+  {id:'q-ps-4', domain:'presales', q:'What must be agreed before a proof of concept is built?', choices:['The final price','Written success criteria, a timebox, named evaluators, and the decision that follows if criteria are met','Only the technical scope','Nothing, because POCs should start fast'], correct:1, explain:'A POC without written success criteria is free consulting. The criteria document is also the defence against scope creep.'},
+  {id:'q-ps-5', domain:'presales', q:'A buyer asks about a capability you are not sure exists. What is the best response?', choices:['Say yes and check later','Say you will confirm, then come back with an accurate answer and any workaround','Change the subject','Say it is on the roadmap'], correct:1, explain:'An overstated capability becomes a delivery problem and a trust problem. Accuracy, with a clear follow-up, protects both the deal and the relationship.'},
+  {id:'q-ps-6', domain:'presales', q:'What does "tell-show-tell" describe?', choices:['A POC governance model','A demo structure: frame why it matters, show only that, then recap what they saw','An RFP scoring method','A discovery call agenda'], correct:1, explain:'Tell-show-tell keeps a demo anchored to the buyer’s pain. Three business moments beat thirty features.'},
+  {id:'q-ps-7', domain:'presales', q:'Which metric most directly measures pre-sales effectiveness?', choices:['Number of demos delivered','Technical win rate','Hours logged in the CRM','Slides produced'], correct:1, explain:'Activity volume is not impact. Technical win rate, demo-to-next-step conversion and POC conversion measure whether pre-sales work moves deals.'},
 ];
 
 /* ---------------------------------------------------------------- */
@@ -638,8 +645,147 @@ const SHEETS = [
     }
   },
   {
+    id: 'se-role', group: 'Pre-Sales Track', navLabel: 'The Solution Engineer Role',
+    eyebrow: '16 · Pre-Sales Track',
+    title: 'The Solution Engineer role',
+    lede: 'Solution Engineer, Solutions Consultant, Sales Engineer, Presales Consultant: same job, many titles. It owns the technical win before the contract is signed, and it is where architecture judgement turns into revenue.',
+    items: [
+      {id:'se1', title:'Explore Salesforce career paths on Trailhead', note:'Salesforce’s own role-based career paths, including pre-sales.', url:'https://trailhead.salesforce.com/career-path'},
+      {id:'se2', title:'Work the "Becoming a Solution Engineer with Salesforce" trailmix', note:'Community-curated trailmix aimed at the SE role. Pair it with the certification track.', url:'https://trailhead.salesforce.com/users/delightfuldavid/trailmixes/becoming-a-solution-engineer-with-salesforce'},
+      {id:'se3', title:'Read how Salesforce hires and ramps its own Solution Engineers', note:'Their graduate SE program: product training, the Administrator certification, and mock demos.', url:'https://www.salesforce.com/company/careers/university-recruiting/sales/success-grad-solution-eng/'},
+      {id:'se4', title:'Skim the Awesome Sales Engineer list', note:'Open, curated list of books, methodologies, demo and POC guides, and communities.', url:'https://github.com/vladar107/awesome-sales-engineer'},
+      {id:'se5', title:'Join a pre-sales community', note:'PreSales Collective is the largest practitioner community for SEs.', url:'https://www.presalescollective.com/'},
+    ],
+    render(){
+      return `${sheetHeader(this)}${sheetMeta('~3 h · career orientation')}
+        <h2 class="section-h">What the job actually is</h2>
+        <p class="body-text">The account executive owns the commercial close. The Solution Engineer owns the <b>technical win</b>: the moment the buyer’s technical evaluators agree the solution fits. Day to day that means technical discovery, solution mapping, tailored demos, proofs of concept, RFP and security-questionnaire responses, and translating between the buyer’s engineers and their executives.</p>
+        <p class="body-text">Survey data from <i>The 2025 Solutions Engineering Career Guide</i> (400+ SEs) puts "Solutions Engineer" as the most common title at roughly 39%, with Sales Engineer and Solutions Consultant close behind. Around three-quarters of SEs sit inside the Sales organisation rather than a standalone solutions function.</p>
+        <h2 class="section-h">Architect vs Solution Engineer</h2>
+        <table class="division-table">
+          <tr><td><b>Architect</b></td><td>Designs for integrity after the deal: data model, sharing, integration, governance. Judged on whether the design holds up in production.</td></tr>
+          <tr><td><b>Solution Engineer</b></td><td>Designs for fit before the deal: the smallest credible solution that wins the technical evaluation without overpromising. Judged on technical win rate.</td></tr>
+          <tr><td><b>Where they meet</b></td><td>Principal SE and Solution Architect roles: deep platform judgement, used live in front of a buyer. An architecture background is a real edge here.</td></tr>
+        </table>
+        <h2 class="section-h">The progression</h2>
+        <ul class="plain-list">
+          <li><b>Associate SE</b> (0–2 yrs): supports reps with demos, technical questions, and POCs.</li>
+          <li><b>Solutions Engineer</b> (1–3 yrs): runs demos and custom POCs end to end.</li>
+          <li><b>Senior SE</b> (4–6 yrs): owns technical discovery and handles POC, RFP, and security-review escalations.</li>
+          <li><b>Principal SE</b> (7–9 yrs): drives the most complex, multi-product opportunities and mentors other SEs.</li>
+          <li><b>Director / VP</b> (10+ yrs): owns SE strategy and metrics like technical win rate and time-to-value.</li>
+        </ul>
+        <div class="callout">
+          <b>Storytelling gets you hired; depth gets you promoted.</b> In the same survey, 90% of SEs rated communication skills very important against 7% for technical skills, yet 42% said improving technical skills would most accelerate their career. The guide’s indicative on-target earnings run from about a $120K median at associate level to about $274K at VP, but those are US Glassdoor figures, so recalibrate for the Australian market.
+        </div>
+        ${itemList(this)}`;
+    }
+  },
+  {
+    id: 'se-discovery', group: 'Pre-Sales Track', navLabel: 'Discovery & Qualification',
+    eyebrow: '17 · Pre-Sales Track',
+    title: 'Discovery & qualification',
+    lede: 'No demo without discovery. The SE’s job in discovery is to find the technical decision criteria and the pain behind them, so every later demo and POC is aimed at something the buyer already said matters.',
+    items: [
+      {id:'sd1', title:'Learn MEDDPICC from the source', note:'Metrics, Economic Buyer, Decision Criteria, Decision Process, Paper Process, Identify Pain, Champion, Competition.', url:'https://meddicc.com/meddpicc-sales-methodology-and-process'},
+      {id:'sd2', title:'Run a SPIN-structured discovery on a real or mock account', note:'Write ten Situation, Problem, Implication and Need-payoff questions before the call.'},
+      {id:'sd3', title:'Build a one-page technical discovery template', note:'Current systems, integration points, identity model, data volumes, security and compliance constraints, success metrics.'},
+      {id:'sd4', title:'Map one discovery to Salesforce capabilities', note:'For each stated pain, name the cloud, feature, or pattern that addresses it, and anything you would not promise.'},
+    ],
+    render(){
+      return `${sheetHeader(this)}${sheetMeta('~4 h')}
+        <h2 class="section-h">Qualification frameworks, in order of depth</h2>
+        <ul class="plain-list">
+          <li><b>BANT</b>: Budget, Authority, Need, Timeline. Fast and shallow; fine for early triage, weak for enterprise deals.</li>
+          <li><b>SPIN</b>: Situation, Problem, Implication, Need-payoff. A questioning technique rather than a scorecard; it gets the buyer to state the cost of the problem themselves.</li>
+          <li><b>MEDDPICC</b>: the enterprise standard, extending MEDDIC with Paper Process and Competition. Metrics, Economic Buyer, Decision Criteria, Decision Process, Paper Process, Identify Pain, Champion, Competition.</li>
+        </ul>
+        <h2 class="section-h">The SE’s slice of MEDDPICC</h2>
+        <p class="body-text">The account executive typically owns Economic Buyer and Paper Process. The SE owns or co-owns three letters: <b>Decision Criteria</b> (the technical requirements the buyer will score you against; get them written down, and influence them where you can), <b>Identify Pain</b> (the technical cause behind the business symptom), and the <b>technical Champion</b> (the buyer-side engineer or architect who argues for your solution when you are not in the room). A deal where the SE cannot name all three is not technically qualified, however well the demo went.</p>
+        <h2 class="section-h">Technical discovery questions worth always asking</h2>
+        <ul class="plain-list">
+          <li>What systems does this touch, and which one is the system of record?</li>
+          <li>How do users authenticate today, and who owns identity?</li>
+          <li>What data volumes are we talking about now, and in three years?</li>
+          <li>What security, privacy, or regulatory review will this go through, and who runs it?</li>
+          <li>What would have to be true in 90 days for this to be called a success?</li>
+        </ul>
+        ${itemList(this)}`;
+    }
+  },
+  {
+    id: 'se-demo-poc', group: 'Pre-Sales Track', navLabel: 'Demo, POC & RFP Craft',
+    eyebrow: '18 · Pre-Sales Track',
+    title: 'Demo, POC & RFP craft',
+    lede: 'Demos win attention, POCs win certainty, RFPs win shortlists. Each one fails the same way: built around the product instead of the buyer’s stated problem.',
+    items: [
+      {id:'dp1', title:'Build a tell-show-tell demo storyboard', note:'Tell them what they will see and why it matters, show only that, then recap what they saw. Three business moments, not thirty features.'},
+      {id:'dp2', title:'Write a POC success-criteria document before any build', note:'Scope, timebox, measurable exit criteria, named evaluators, and the decision the buyer commits to if criteria are met.'},
+      {id:'dp3', title:'Whiteboard a target architecture in under ten minutes', note:'Systems, integration flows, identity, data ownership. This is the architect skill buyers rarely see from other SEs.'},
+      {id:'dp4', title:'Draft answers to a sample security questionnaire', note:'Trust, encryption, data residency, SSO and MFA, audit logging. Accurate and sourced, never guessed.'},
+      {id:'sp1a', title:'Kept the meeting rather than refusing it', note:'Protected the account executive’s access to the CIO.'},
+      {id:'sp1b', title:'Secured some discovery before or at the start of the session', note:'A pre-call, emailed questions, or ten structured minutes up front.'},
+      {id:'sp1c', title:'Limited the demo to a few pain-led moments', note:'Not a full-platform tour.'},
+      {id:'sp1d', title:'Agreed a concrete next step', note:'A tailored follow-up session rather than ending on the demo.'},
+    ],
+    render(){
+      const core = this.items.filter(it => !it.id.startsWith('sp1'));
+      const rubric = this.items.filter(it => it.id.startsWith('sp1'));
+      const s = scenario('P1', 'The demo request with no discovery',
+        'An account executive messages you on Monday: a prospect’s CIO wants "the full platform demo" on Thursday. No discovery call has happened, and the AE worries that pushing back will lose the meeting.',
+        'What do you do between now and Thursday, and what does Thursday actually look like?',
+        [
+          'What is the risk of a generic demo to a CIO?',
+          'What is the smallest discovery you can realistically get before Thursday?',
+          'How do you protect the AE’s relationship while changing the plan?',
+        ],
+        'Keep the Thursday slot, but change what it is. Ask the AE for a 20-minute pre-call with the CIO’s delegate or a technical lead; if that is impossible, send three sharp questions by email. On Thursday, open with ten minutes of structured discovery framed as "so we show you what matters", run a short, story-led demo of the two most likely pains, and agree a tailored follow-up session before the call ends. A generic full-platform demo spends the most senior attention you will ever get on features the buyer did not ask about.',
+        rubric
+      );
+      return `${sheetHeader(this)}${sheetMeta('~5 h · includes 1 scenario')}
+        <h2 class="section-h">Demos</h2>
+        <p class="body-text">Demo the buyer’s day, not the feature catalogue. Open with the pain discovery surfaced, show the two or three moments that remove it, and stop. <i>The 2025 Solutions Engineering Career Guide</i> found close to half of SEs spend five or more hours a week customising demo environments; reusable, scenario-based demo orgs and a clear storyboard win most of that time back.</p>
+        <h2 class="section-h">Proofs of concept</h2>
+        <p class="body-text">A POC without written success criteria is free consulting. Agree the scope, timebox, evaluators, measurable criteria, and the decision that follows if the criteria are met, all before a single component is built. Scope creep usually arrives as "one more small thing"; every addition goes back through the criteria document.</p>
+        <h2 class="section-h">RFPs and security reviews</h2>
+        <p class="body-text">Accuracy beats enthusiasm. An RFP answer that overstates a capability becomes a delivery problem and a trust problem later. Keep a sourced answer library, label anything on the roadmap as roadmap, and bring architecture in early for security reviews: identity, encryption, data residency, and audit logging are where deals stall.</p>
+        ${core.map(it => itemRow(it.id, it.title, it.note, it.tag, it.url)).join('')}
+        <h2 class="section-h">Practice scenario</h2>
+        ${s}`;
+    }
+  },
+  {
+    id: 'se-interview', group: 'Pre-Sales Track', navLabel: 'Pre-Sales Interview Prep',
+    eyebrow: '19 · Pre-Sales Track',
+    title: 'Pre-sales interview prep',
+    lede: 'Pre-sales interviews test judgement under commercial pressure: can you run discovery, tell a story, admit what the product cannot do, and still move the deal forward?',
+    items: [
+      {id:'si1', title:'Prepare a 5-minute demo you can run cold', note:'Pick one Salesforce scenario, storyboard it tell-show-tell, and rehearse against a timer.'},
+      {id:'si2', title:'Write three deal stories', note:'For each: the buyer problem, what you did, the measurable outcome, and what did not work.'},
+      {id:'si3', title:'Rehearse the "we can’t do that" answer', note:'Acknowledge the gap honestly, explain the workaround or roadmap, and redirect to the outcome the buyer actually needs.'},
+      {id:'si4', title:'Know your pre-sales metrics', note:'Technical win rate, demo-to-next-step conversion, POC conversion, sales cycle time.'},
+      {id:'si5', title:'Work through a published presales question bank', note:'Question sets covering role scope, sales process, scenario role-plays, and metrics.', url:'https://hyring.com/jobseeker-toolkit/interview-questions/role/presales'},
+    ],
+    render(){
+      return `${sheetHeader(this)}${sheetMeta('before an interview')}
+        <h2 class="section-h">What interviewers probe</h2>
+        <ul class="plain-list">
+          <li><b>Role scope</b>: can you separate the technical win you own from the commercial close the account executive owns?</li>
+          <li><b>Sales process</b>: can you walk discovery, solution mapping, demo, POC scoping, RFP and risk review in order, and say what each stage must produce?</li>
+          <li><b>Scenarios and role-play</b>: a demo requested with no discovery, a feature you are not sure exists, pressure to oversell, a demo that breaks live.</li>
+          <li><b>Metrics</b>: which numbers you track, and which decisions they drive.</li>
+        </ul>
+        <h2 class="section-h">How strong answers are shaped</h2>
+        <p class="body-text">Name the buyer problem, what you did, the measurable result, and what did not go to plan. Rehearsed perfection reads as untested; a candid miss with a clear lesson reads as experience. In role-plays, honesty about product limits scores better than a smooth overpromise, because interviewers are screening for the SE who will not create a delivery problem to close a quarter.</p>
+        <div class="callout">
+          <b>Bridge from architecture:</b> governance, design reviews, and decision records are exactly what make a POC succeed and a handover to delivery clean. Most career SEs cannot tell that story; lead with it.
+        </div>
+        ${itemList(this)}`;
+    }
+  },
+  {
     id: 'certification', group: 'Certification', navLabel: 'Certification Track',
-    eyebrow: '16 · Certification',
+    eyebrow: '20 · Certification',
     title: 'Certification track',
     lede: 'Not a sprint — layer credentials as depth in each domain solidifies. Order matters more than speed.',
     items: [
@@ -675,7 +821,7 @@ const SHEETS = [
   },
   {
     id: 'bridge', group: 'Interview Bridge', navLabel: 'Readiness Bridge',
-    eyebrow: '17 · Interview Bridge',
+    eyebrow: '21 · Interview Bridge',
     title: 'What already transfers',
     lede: 'Translation notes for walking into a Salesforce Solution Architect conversation on the strength of existing enterprise architecture experience — lead with this.',
     items: [
@@ -694,7 +840,7 @@ const SHEETS = [
   },
   {
     id: 'resources', group: 'Reference', navLabel: 'Resources',
-    eyebrow: '18 · Reference',
+    eyebrow: '22 · Reference',
     title: 'Reference resources',
     lede: 'The primary sources this workspace is built from, plus ongoing references worth bookmarking.',
     items: [],
@@ -707,12 +853,14 @@ const SHEETS = [
           ${resourceItem('Salesforce Architecture Center', 'The official home of Salesforce architecture fundamentals, reference architectures, and the "Think Like an Architect" series — referenced directly in most Solution Architect job descriptions.', 'https://architect.salesforce.com/', 'Open Architecture Center')}
           ${resourceItem('Salesforce Dictionary — Dashboard', 'Terminology, certification prep, interview prep, learning paths, and a salary calculator in one place.', 'https://salesforcedictionary.com/dashboard', 'Open dashboard')}
           ${resourceItem('Architect Journey Trailmix', 'Built specifically for the architect certification path.', 'https://trailhead.salesforce.com/users/strailhead/trailmixes/architect-trailmix-master', 'Open trailmix')}
+          ${resourceItem('Awesome Sales Engineer', 'Open, curated list of pre-sales books, methodologies, demo and POC guides, and communities.', 'https://github.com/vladar107/awesome-sales-engineer', 'Open list')}
+          ${resourceItem('PreSales Collective', 'The largest practitioner community for Solution Engineers and pre-sales professionals.', 'https://www.presalescollective.com/', 'Open community')}
         </ul>`;
     }
   },
   {
     id: 'progress', group: 'Progress', navLabel: 'Progress & Review Queue',
-    eyebrow: '19 · Progress',
+    eyebrow: '23 · Progress',
     title: 'Progress & review queue',
     lede: 'Completion across every sheet, plus anything you’ve bookmarked or left half-finished.',
     items: [],
