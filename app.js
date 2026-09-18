@@ -2,149 +2,8 @@
    sheet routing, sidebar/context sync, Study Desk notes, progress tracker, search. */
 
 (function(){
-  const LS_CHECKED = 'sfaw-checked';
-  const LS_NOTES_PREFIX = 'sfaw-notes-';
-  const LS_BOOKMARKS = 'sfaw-bookmarks';
-  const LS_DESK_COLLAPSED = 'sfaw-desk-collapsed';
 
-  function lsGet(key, fallback){
-    try{
-      const v = localStorage.getItem(key);
-      return v === null ? fallback : JSON.parse(v);
-    }catch(e){ return fallback; }
-  }
-  function lsSet(key, value){
-    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* storage unavailable */ }
-  }
-
-  let checked = lsGet(LS_CHECKED, {});
-  let bookmarks = new Set(lsGet(LS_BOOKMARKS, []));
-  let quizAnswers = lsGet('sfaw-quiz-answers', {});
-  let quizFilter = 'all';
-
-  function isChecked(id){ return !!checked[id]; }
-  function toggleChecked(id, val){
-    checked[id] = val;
-    lsSet(LS_CHECKED, checked);
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* Content helpers                                                  */
-  /* ---------------------------------------------------------------- */
-
-  function itemRow(id, title, note, tag, url){
-    const c = isChecked(id);
-    return `<div class="item-row">
-      <input type="checkbox" id="cb-${id}" data-item="${id}" ${c ? 'checked' : ''}>
-      <div class="item-text">
-        <p class="item-title${c ? ' checked' : ''}">${title}</p>
-        <p class="item-note">${note}${url ? ` — <a href="${url}" target="_blank" rel="noopener" class="item-link">Trailhead page &#8599;</a>` : ''}</p>
-      </div>
-      ${tag ? `<span class="item-tag">${tag}</span>` : ''}
-    </div>`;
-  }
-
-  function kad(icon, title, desc){
-    return `<div class="kad-card"><span class="k-icon">${icon}</span><b>${title}</b><span>${desc}</span></div>`;
-  }
-
-  function quizSummaryTile(){
-    const total = QUIZ_BANK.length;
-    const attempted = QUIZ_BANK.filter(q => quizAnswers[q.id] !== undefined).length;
-    const correct = QUIZ_BANK.filter(q => quizAnswers[q.id] === q.correct).length;
-    const pct = total ? Math.round((correct / total) * 100) : 0;
-    const circumference = 138.2;
-    const offset = circumference - (pct / 100) * circumference;
-    const subtext = attempted
-      ? `${correct} / ${attempted} attempted correct &middot; ${total - attempted} left to try`
-      : `${total} questions, not started yet`;
-    return `<div class="progress-summary quiz-summary-tile">
-      <svg class="progress-ring" viewBox="0 0 56 56">
-        <circle cx="28" cy="28" r="22" fill="none" stroke="#E2E6EF" stroke-width="5"></circle>
-        <circle cx="28" cy="28" r="22" fill="none" stroke="#0176D3" stroke-width="5"
-          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
-          transform="rotate(-90 28 28)"></circle>
-      </svg>
-      <div>
-        <p class="p-label">Quiz score</p>
-        <p class="p-count">${correct} / ${total} correct &middot; ${pct}%</p>
-        <p class="quiz-summary-sub">${subtext}</p>
-      </div>
-      <a href="#quiz" class="quiz-summary-link">Open Quiz Bank &#8594;</a>
-    </div>`;
-  }
-
-  function quizQuestionHtml(q, num){
-    const answered = quizAnswers[q.id];
-    const isAnswered = answered !== undefined;
-    const choicesHtml = q.choices.map((c, idx) => {
-      let cls = '';
-      if(isAnswered){
-        if(idx === q.correct) cls = ' correct';
-        else if(idx === answered) cls = ' incorrect';
-      }
-      return `<label class="quiz-choice${cls}">
-        <input type="radio" name="${q.id}" value="${idx}" data-qid="${q.id}" ${answered === idx ? 'checked' : ''} ${isAnswered ? 'disabled' : ''}>
-        <span>${c}</span>
-      </label>`;
-    }).join('');
-    const explainHtml = isAnswered
-      ? `<p class="quiz-explain${answered === q.correct ? ' right' : ' wrong'}">${answered === q.correct ? '✓ Correct' : '✗ Incorrect'}: ${q.explanation}</p>`
-      : '';
-    return `<div class="quiz-question">
-      <p class="quiz-question-text">${num}. ${q.question}</p>
-      ${choicesHtml}
-      ${explainHtml}
-    </div>`;
-  }
-
-  function resourceItem(title, note, url, linkText){
-    return `<li class="resource-item">
-      <a href="${url}" target="_blank" rel="noopener">${title}</a>
-      <p class="resource-note">${note}</p>
-      <a href="${url}" target="_blank" rel="noopener" class="resource-link">${linkText}</a>
-    </li>`;
-  }
-
-  function scenario(num, title, setup, question, considerations, model, rubric){
-    return `<div class="scenario">
-      <h2 class="scenario-title">Scenario ${num}: ${title}</h2>
-      <p class="scenario-setup">${setup}</p>
-      <p class="scenario-question">${question}</p>
-      <ul class="scenario-considerations">
-        ${considerations.map(c => `<li>${c}</li>`).join('')}
-      </ul>
-      <p class="scenario-model"><strong>Model Answer:</strong> ${model}</p>
-      <ul class="scenario-rubric">
-        ${rubric.map(r => `<li>${r.title}: ${r.note}</li>`).join('')}
-      </ul>
-    </div>`;
-  }
-
-  function sheetHeader(sheet){
-    return `<p class="sheet-eyebrow">${sheet.eyebrow}</p>
-      <h1 class="sheet-title">${sheet.title}</h1>
-      <p class="sheet-lede">${sheet.lede}</p>`;
-  }
-
-  function sheetMeta(text){
-    return `<div class="sheet-meta"><span>${text}</span></div>`;
-  }
-
-  function itemList(sheet){
-    return sheet.items.map(it => itemRow(it.id, it.title, it.note, it.tag, it.url)).join('');
-  }
-
-  function overallProgress(){
-    let total = 0, done = 0;
-    SHEETS.forEach(s => { total += s.items.length; done += s.items.filter(it => isChecked(it.id)).length; });
-    return {done, total};
-  }
-
-  function loadNotes(sheetId){
-    const notes = lsGet(LS_NOTES_PREFIX + sheetId, '');
-    document.getElementById('desk-notes').value = notes;
-  }
+const LS_CHECKED = 'sfaw-checked';
 const LS_NOTES_PREFIX = 'sfaw-notes-';
 const LS_BOOKMARKS = 'sfaw-bookmarks';
 const LS_DESK_COLLAPSED = 'sfaw-desk-collapsed';
@@ -202,8 +61,8 @@ function quizSummaryTile(){
     : `${total} questions, not started yet`;
   return `<div class="progress-summary quiz-summary-tile">
     <svg class="progress-ring" viewBox="0 0 56 56">
-      <circle cx="28" cy="28" r="22" fill="none" stroke="#E2E6EF" stroke-width="5"></circle>
-      <circle cx="28" cy="28" r="22" fill="none" stroke="#0176D3" stroke-width="5"
+      <circle cx="28" cy="28" r="22" fill="none" style="stroke:var(--paper-border)" stroke-width="5"></circle>
+      <circle cx="28" cy="28" r="22" fill="none" style="stroke:var(--accent)" stroke-width="5"
         stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
         transform="rotate(-90 28 28)"></circle>
     </svg>
@@ -884,8 +743,8 @@ const SHEETS = [
       return `${sheetHeader(this)}
         <div class="progress-summary">
           <svg class="progress-ring" viewBox="0 0 56 56">
-            <circle cx="28" cy="28" r="24" fill="none" stroke="#E2E6EF" stroke-width="5"></circle>
-            <circle cx="28" cy="28" r="24" fill="none" stroke="#0176D3" stroke-width="5"
+            <circle cx="28" cy="28" r="24" fill="none" style="stroke:var(--paper-border)" stroke-width="5"></circle>
+            <circle cx="28" cy="28" r="24" fill="none" style="stroke:var(--accent)" stroke-width="5"
               stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"
               transform="rotate(-90 28 28)"></circle>
           </svg>

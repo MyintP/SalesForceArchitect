@@ -7,15 +7,78 @@
 <meta name="description" content="A zero-to-hero Salesforce Architect curriculum: platform foundations, Apex, LWC, data architecture, sharing design, integration, identity, DevOps, and hands-on Connected Case practice.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css">
+<script>
+/* Display controls: theme (auto/light/dark) and text size (auto or manual).
+   Runs in <head> so the saved theme and size apply before first paint. */
+(function(){
+  var STEPS = [0.85, 0.92, 1, 1.08, 1.16, 1.25, 1.35];
+  var root = document.documentElement;
+  var dark = window.matchMedia('(prefers-color-scheme: dark)');
+  function get(k, d){ try{ var v = localStorage.getItem(k); return v === null ? d : v; }catch(e){ return d; } }
+  function set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+
+  var themeMode = get('sfaw-theme', 'auto');      // auto | light | dark
+  var sizeMode = get('sfaw-text-scale', 'auto');  // auto | a number from STEPS
+
+  function autoScale(){
+    var w = window.innerWidth;
+    if(w < 480) return 0.92;
+    if(w < 1280) return 1;
+    if(w < 1680) return 1.08;
+    return 1.16;
+  }
+  function scale(){ return sizeMode === 'auto' ? autoScale() : parseFloat(sizeMode); }
+
+  function apply(){
+    var effective = themeMode === 'auto' ? (dark.matches ? 'dark' : 'light') : themeMode;
+    root.setAttribute('data-theme', effective);
+    root.style.setProperty('--text-scale', scale());
+    var t = document.getElementById('theme-btn');
+    if(t){
+      t.querySelector('.icon-btn-label').textContent = 'Theme: ' + themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
+      t.title = 'Theme: ' + themeMode + ' · text ' + Math.round(scale() * 100) + '%' + (sizeMode === 'auto' ? ' (auto)' : '') + ' — click to cycle Auto → Light → Dark';
+    }
+  }
+  function step(dir){
+    var cur = scale(), i = 0, best = Infinity;
+    STEPS.forEach(function(s, idx){ var d = Math.abs(s - cur); if(d < best){ best = d; i = idx; } });
+    i = Math.max(0, Math.min(STEPS.length - 1, i + dir));
+    sizeMode = String(STEPS[i]);
+    set('sfaw-text-scale', sizeMode);
+    apply();
+  }
+
+  apply();
+  dark.addEventListener('change', apply);
+  window.addEventListener('resize', function(){ if(sizeMode === 'auto') apply(); });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('text-dec').addEventListener('click', function(){ step(-1); });
+    document.getElementById('text-inc').addEventListener('click', function(){ step(1); });
+    document.getElementById('theme-btn').addEventListener('click', function(){
+      themeMode = themeMode === 'auto' ? 'light' : themeMode === 'light' ? 'dark' : 'auto';
+      set('sfaw-theme', themeMode);
+      if(themeMode === 'auto'){ sizeMode = 'auto'; set('sfaw-text-scale', 'auto'); }
+      apply();
+    });
+    apply();
+  });
+})();
+</script>
 </head>
 <body>
 <div class="app">
 
   <div class="context-bar">
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" title="Toggle navigation">&#9776;</button>
-    <div class="brand"><b>SF</b>&nbsp;Architect Workspace</div>
+    <div class="brand"><b>SF</b><span class="brand-text">&nbsp;Architect Workspace</span></div>
     <div class="context-current" id="context-current"></div>
     <div class="context-spacer"></div>
+    <div class="display-controls">
+      <button class="icon-btn text-size-btn" id="text-dec" title="Smaller text" aria-label="Smaller text">A&minus;</button>
+      <button class="icon-btn text-size-btn" id="text-inc" title="Larger text" aria-label="Larger text">A+</button>
+      <button class="icon-btn" id="theme-btn" title="Theme">&#9680; <span class="icon-btn-label">Theme: Auto</span></button>
+    </div>
     <button class="icon-btn" id="bookmark-btn" title="Bookmark this sheet">&#9733; <span class="icon-btn-label">Bookmark</span></button>
     <button class="icon-btn" id="search-btn" title="Search the workspace">&#128269; <span class="icon-btn-label">Search</span> <kbd>Ctrl</kbd>+<kbd>K</kbd></button>
   </div>
